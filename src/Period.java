@@ -1,3 +1,5 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -7,6 +9,7 @@ public class Period {
     private ArrayList<Person> persons;
     private ArrayList<Purchase> purchases;
     private User owner;
+    private static SimpleDateFormat dateAndTimeParser = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     public Period(String name, Date startDate, User owner) {
         this.name = name;
@@ -48,5 +51,15 @@ public class Period {
 
     public void addPurchase(Purchase purchase) {
         this.purchases.add(purchase);
+    }
+
+    public static Date getDateByDateString(String startDateAndTimeInput) {
+        try {
+            dateAndTimeParser.setLenient(false);
+            Date dateAndTime = dateAndTimeParser.parse(startDateAndTimeInput);
+            return dateAndTime;
+        } catch (ParseException e) {
+            return null;
+        }
     }
 }

@@ -1,13 +1,24 @@
+import java.util.ArrayList;
+
 public class User {
     private String username;
     private String password;
     private String name;
+    private ArrayList<Period> periods;
     private static User loggedInUser;
 
     public User(String username, String password, String name) {
         this.username = username;
         this.password = password;
         this.name = name;
+    }
+
+    public ArrayList<Period> getPeriods() {
+        return periods;
+    }
+
+    public void addToPeriods(Period period){
+        periods.add(period);
     }
     public String getUsername() {
         return username;
@@ -63,4 +74,5 @@ public class User {
         }
         return null;
     }
+
 }
