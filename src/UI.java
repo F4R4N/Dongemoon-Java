@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
+import javax.jws.soap.SOAPBinding.Use;
+
 public class UI {
     private static Scanner inputReader = new Scanner(System.in);
 
@@ -97,7 +99,7 @@ public class UI {
     public static void printUserMainMenu() {
         printTitle("User Menu");
         System.out.println(
-                "1- List of Periods\n2- New Period\n3- Periods Details\n4- Edit Period\n5- \n6- \n7- \n8- \n9- \n10- \n11- Save And Logout");
+                "1- List of Periods\n2- New Period\n3- Periods Details\n4- Edit Period\n5- add person to period\n6- add purchase to period\n7- \n8- \n9- \n10- \n11- Save And Logout");
     }
 
     public static void startUserMainMenuSection() {
@@ -111,7 +113,7 @@ public class UI {
                 createPeriodMenu();
                 break;
             case 3:
-
+                startPeriodDetailMenu();
                 break;
             case 4:
 
@@ -149,41 +151,49 @@ public class UI {
         if (periods.size() == 0) {
             System.out.println("No period exist yet.");
         } else {
-            System.out.println("--------------------------------------------------");
 
-            String format = "|%-10s  |%-25s|%-25s|%n";
+            String format = "|%-10s  |%-25s|%-35s|%n";
             System.out.printf(format, "NO.", "Name", "Start Date");
             System.out
-                    .print(String.format("|%012d|%025d|%025d|%n", 0, 0, 0)
+                    .print(String.format("|%012d|%025d|%035d|%n", 0, 0, 0)
                             .replace("0", "-"));
             for (int index = 0; index < periods.size(); index++) {
                 Period period = periods.get(index);
                 System.out.printf(format, (index + 1), period.getName(), period.getStartDate());
-                System.out.println("-------------------------");
-                System.out.println("Persons involved in this period:");
-                System.out.println("-------------------------");
-                for (int i = 0; i < period.getPersons().size(); i++) {
-                    System.out.print(period.getPersons().get(i).getName() + ", ");
+
+                printTitle("Persons involved in this period:");
+                if (period.getPersons() == null) {
+                    System.out.println("No person");
+                } else {
+                    for (int i = 0; i < period.getPersons().size(); i++) {
+                        System.out.print(period.getPersons().get(i).getName() + ", ");
+                    }
                 }
-                for (int i = 0; i < period.getPurchases().size(); i++) {
-                    System.out.print(period.getPurchases().get(i).getTitle() + ", ");
+                printTitle("Purchases in this period: ");
+                if (period.getPurchases() == null) {
+                    System.out.println("No purchases");
+                } else {
+                    for (int i = 0; i < period.getPurchases().size(); i++) {
+                        System.out.print(period.getPurchases().get(i).getTitle() + ", ");
+                    }
                 }
+                System.out.println("---------------------------------------------------------------------------------------------------------");
             }
         }
     }
-
     public static void createPeriodMenu() {
         printTitle("Create Period");
         String name = getUserStringInput("Name: ");
         String startDateAndTimeInput = getUserStringInput("Start Date and Time (in 'yyyy-MM-dd HH:mm' format): ");
         Date startDateAndTime = Period.getDateByDateString(startDateAndTimeInput);
-        ArrayList<Person> persons = getPersonInputs();
-        ArrayList<Purchase> purchases = getPurchaseInputs();
         if (startDateAndTime == null) {
             System.out.println("Invalid date and time. try again.");
             createPeriodMenu();
         }
-        // create period here.
+        Period period = new Period(name, startDateAndTime);
+        User.getLoggedInUser().addToPeriods(period);
+        System.out.println("Period created successfully!!");
+        startUserMainMenuSection();
 
     }
 
@@ -199,16 +209,19 @@ public class UI {
         }
         while (true) {
             String personInput = getUserStringInput(
-                    "Write the person name from the list above or write another name to create new person (if you are done adding enter '0'): ");
+                    "Write the person name from the list above or write another name to create new person (if you are done adding, enter '0'): ");
             if (personInput.equals("0")) {
                 break;
             }
             Person person = Person.addOrCreatePerson(personInput);
-            persons.add(person);
+            if (!persons.contains(person)) {
+                persons.add(person);
+            } else {
+                System.out.println("This person is already added.");
+            }
         }
         return persons;
-    } // TODO: SHOULD STOP USER FROM ENTERING DUPLICATE NAMES IN PERSON ADDING PART.
-    // TODO: SHOULD CHECK IF USER HAVE ADDED PERSON TO PERIOD. IF NOT STOP THEM FROM CREATING PURCHASE AND SHIFT THE TO THE LAST STEP.
+    }
 
     public static ArrayList<Purchase> getPurchaseInputs() {
         ArrayList<Purchase> purchases = new ArrayList<Purchase>();
@@ -219,4 +232,15 @@ public class UI {
         }
     }
 
+    public static void startPeriodDetailMenu() {
+        printTitle("Period Detail");
+        ArrayList<Period> periods = User.getLoggedInUser().getPeriods();
+        printPeriods(periods);
+        int periodIndexInput = getUserIntInput("Enter Period number to see details: ") - 1;
+        if (periodIndexInput > periods.size() - 1 || periodIndexInput < 0) {
+            printInvalidChoice();
+            startPeriodDetailMenu();
+        }
+        Period.printPeriodDetail(periods.get(periodIndexInput));
+    }
 }

@@ -11,6 +11,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.name = name;
+        this.periods = new ArrayList<Period>();
     }
 
     public ArrayList<Period> getPeriods() {
@@ -18,7 +19,7 @@ public class User {
     }
 
     public void addToPeriods(Period period){
-        periods.add(period);
+        this.periods.add(period);
     }
     public String getUsername() {
         return username;

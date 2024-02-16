@@ -8,21 +8,17 @@ public class Period {
     private Date startDate;
     private ArrayList<Person> persons;
     private ArrayList<Purchase> purchases;
-    private User owner;
     private static SimpleDateFormat dateAndTimeParser = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-    public Period(String name, Date startDate, User owner) {
+    public Period(String name, Date startDate) {
         this.name = name;
         this.startDate = startDate;
-        this.owner = owner;
+        this.persons = new ArrayList<Person>();
+        this.purchases = new ArrayList<Purchase>();
     }
 
     public String getName() {
         return name;
-    }
-
-    public User getOwner() {
-        return owner;
     }
 
     public Date getStartDate() {
@@ -61,5 +57,21 @@ public class Period {
         } catch (ParseException e) {
             return null;
         }
+    }
+
+    public int getTotalExpenses(){
+        int expenses = 0;
+        for (int index = 0; index < this.purchases.size(); index++) {
+            expenses += this.purchases.get(index).getExpense();
+        }
+        return expenses;
+    }
+
+    public static void printPeriodDetail(Period period){
+        UI.printTitle("'"+period.getName()+"'s' period detail");
+        System.out.println("Start date and time"+dateAndTimeParser.format(period.getStartDate()));
+        System.out.println("Number of persons involved in this period: "+period.persons.size());
+        System.out.println("Total Expenses: "+ period.getTotalExpenses());
+        System.out.println("Number of purchases in period: "+ period.getPurchases().size());
     }
 }
