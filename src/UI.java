@@ -102,7 +102,7 @@ public class UI {
     private static void printUserMainMenu() {
         printTitle("User Menu");
         System.out.println(
-                "1- List of Periods\n2- New Period\n3- Periods Details\n4- Edit Period\n5- add person to period\n6- add purchase to period\n7- Export data\n8- Save And Logout");
+    "1- List of Periods\n2- New Period\n3- Periods Details\n4- Edit Period\n5- Remove period\n6- Add person to period\n7- add purchase to period\n8- Export data\n9- Save And Logout");
     }
 
     private static void startUserMainMenuSection() {
@@ -116,7 +116,7 @@ public class UI {
                 showCreatePeriodMenu();
                 break;
             case 3:
-                startPeriodDetailMenu(); // unfinished
+                startPeriodDetailMenu(); // TODO:unfinished - have to add menu that in it we can implement sort and filter (filter for buyer and purchase user)(sort for expense and start datee and time)
                 break;
             case 4:
                 startEditPeriodMenu();
@@ -131,6 +131,9 @@ public class UI {
 
                 break;
             case 8:
+
+                break;
+                case 9:
 
                 break;
             default:
@@ -178,31 +181,31 @@ public class UI {
 
     }
 
-    public static ArrayList<Person> getPersonInputs() {
-        ArrayList<Person> persons = new ArrayList<Person>();
-        printTitle("Existing Persons");
-        if (Person.getAllExistingPersons() == null) {
-            System.out.println("There is no person exist.");
-        } else {
-            for (int index = 0; index < Person.getAllExistingPersons().size(); index++) {
-                System.out.println(Person.getAllExistingPersons().get(index).getName());
-            }
-        }
-        while (true) {
-            String personInput = getUserStringInput(
-                    "Write the person name from the list above or write another name to create new person (if you are done adding, enter '0'): ");
-            if (personInput.equals("0")) {
-                break;
-            }
-            Person person = Person.addOrCreatePerson(personInput);
-            if (!persons.contains(person)) {
-                persons.add(person);
-            } else {
-                System.out.println("This person is already added.");
-            }
-        }
-        return persons;
-    }
+    // public static ArrayList<Person> getPersonInputs() {
+    //     ArrayList<Person> persons = new ArrayList<Person>();
+    //     printTitle("Existing Persons");
+    //     if (Person.getAllExistingPersons() == null) {
+    //         System.out.println("There is no person exist.");
+    //     } else {
+    //         for (int index = 0; index < Person.getAllExistingPersons().size(); index++) {
+    //             System.out.println(Person.getAllExistingPersons().get(index).getName());
+    //         }
+    //     }
+    //     while (true) {
+    //         String personInput = getUserStringInput(
+    //                 "Write the person name from the list above or write another name to create new person (if you are done adding, enter '0'): ");
+    //         if (personInput.equals("0")) {
+    //             break;
+    //         }
+    //         Person person = Person.addOrCreatePerson(personInput);
+    //         if (!persons.contains(person)) {
+    //             persons.add(person);
+    //         } else {
+    //             System.out.println("This person is already added.");
+    //         }
+    //     }
+    //     return persons;
+    // }
 
     // public static ArrayList<Purchase> getPurchaseInputs() {
     // ArrayList<Purchase> purchases = new ArrayList<Purchase>();
@@ -233,10 +236,10 @@ public class UI {
     }
 
     public static void startEditPeriodMenu() {
-        // can edit date name remove purchases.
+
         Period period = getUserPeriodChoice("Edit Period");
         int userEditChoice = getUserIntInput(
-                "What do you want to edit?\n1- Period name\n2- Periods start date\n3- Remove a purchase\n4- Edit purchase\n5- Back\n: ");
+                "What do you want to edit?\n1- Period name\n2- Periods start date\n3- Remove a purchase\n4- Remove a person\n5- Edit purchase\n6- Back\n: ");
         switch (userEditChoice) {
             case 1:
                 showEditPeriodNameMenu(period);
@@ -247,10 +250,13 @@ public class UI {
             case 3:
                 showRemovePurchaseMenu(period);
                 break;
-            case 4:
-                startChoosePurchaseSection(period);
+                case 4:
+                showRemovePersonMenu(period);
                 break;
             case 5:
+                startChoosePurchaseSection(period); // TODO:unfinished
+                break;
+            case 6:
                 startUserMainMenuSection();
                 break;
 
@@ -297,6 +303,19 @@ public class UI {
         } else {
             period.getPurchases().remove(period.getPurchases().get(userDeletionChoice));
             System.out.println("chose purchase was deleted successfully!");
+        }
+    }
+
+    public static void showRemovePersonMenu(Period period){
+        ArrayList<Person> persons = period.getPersons();
+        Person.printPersons(persons);
+        int userPersonRemoveChoice = getUserIntInput("Which person do you want to remove from period? enter the number associated with it: ")-1;
+        if (Person.isInvalidIndex(persons, userPersonRemoveChoice)) {
+            printInvalidChoice();
+            startEditPeriodMenu();
+        }else{
+            persons.remove(persons.get(userPersonRemoveChoice));
+            System.out.println("Person remove successfully!");
         }
     }
 
@@ -393,7 +412,7 @@ public class UI {
         int purchaseUserEditChoice = getUserIntInput("1- Add new purchase User\n2- Remove purchase user\n3- Back\n: ");
         switch (purchaseUserEditChoice) {
             case 1:
-            
+
                 break;
             case 2:
 
@@ -408,5 +427,4 @@ public class UI {
                 break;
         }
     }
-
 }
