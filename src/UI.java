@@ -12,10 +12,10 @@ public class UI {
             int userActionType = getUserIntInput(":");
             switch (userActionType) {
                 case 1:
-                    registerUserMenu();
+                showRegisterUserMenu();
                     break;
                 case 2:
-                    loginUserMenu();
+                    showLoginUserMenu();
                     break;
                 case 3:
                     runProgram = false;
@@ -29,26 +29,25 @@ public class UI {
         }
     }
 
-    public static void registerUserMenu() {
+    private static void showRegisterUserMenu() {
         String username = getUserStringInput("\nUsername: ");
         if (User.doesUsernameExist(username)) {
             System.out.println("User with this username is already exist try another one.");
-            registerUserMenu();
+            showRegisterUserMenu();
         }
         String password = getUserStringInput("Password: ");
         String name = getUserStringInput("Name: ");
         if (Utils.isStringEmptyOrNull(username) || Utils.isStringEmptyOrNull(name)
                 || Utils.isStringEmptyOrNull(password)) {
             System.out.println("username or password or name cannot be empty.");
-            registerUserMenu();
+            showRegisterUserMenu();
         } else {
             User.registerUser(username, password, name);
             System.out.println("User created successfully");
         }
-
     }
 
-    public static void loginUserMenu() {
+    private static void showLoginUserMenu() {
         String username = getUserStringInput("Username: ");
         String password = getUserStringInput("Password: ");
         if (User.isUserAuthorized(username, password)) {
@@ -67,7 +66,7 @@ public class UI {
         }
     }
 
-    public static void printInvalidChoice() {
+    private static void printInvalidChoice() {
         System.out.println("Invalid choice, please try again!");
     }
 
@@ -76,13 +75,13 @@ public class UI {
         System.out.print("\n1- Register\n2- Login\n3- Exit\n");
     }
 
-    public static String getUserStringInput(String message) {
+    private static String getUserStringInput(String message) {
         System.out.print(message);
         String userInput = inputReader.nextLine();
         return userInput;
     }
 
-    public static int getUserIntInput(String message) {
+    private static int getUserIntInput(String message) {
         while (true) {
             System.out.print(message);
             String userInput = inputReader.nextLine();
@@ -100,24 +99,24 @@ public class UI {
 
     }
 
-    public static void printUserMainMenu() {
+    private static void printUserMainMenu() {
         printTitle("User Menu");
         System.out.println(
-                "1- List of Periods\n2- New Period\n3- Periods Details\n4- Edit Period\n5- add person to period\n6- add purchase to period\n7- \n8- \n9- \n10- \n11- Save And Logout");
+                "1- List of Periods\n2- New Period\n3- Periods Details\n4- Edit Period\n5- add person to period\n6- add purchase to period\n7- Export data\n8- Save And Logout");
     }
 
-    public static void startUserMainMenuSection() {
+    private static void startUserMainMenuSection() {
         printUserMainMenu();
         int userChoice = getUserIntInput(": ");
         switch (userChoice) {
             case 1:
-                listPeriods();
+                printListOfPeriods();
                 break;
             case 2:
-                createPeriodMenu();
+                showCreatePeriodMenu();
                 break;
             case 3:
-                startPeriodDetailMenu();
+                startPeriodDetailMenu(); // unfinished
                 break;
             case 4:
                 startEditPeriodMenu();
@@ -135,11 +134,13 @@ public class UI {
 
                 break;
             default:
+                printInvalidChoice();
+                startUserMainMenuSection();
                 break;
         }
     }
 
-    public static void listPeriods() {
+    public static void printListOfPeriods() {
         System.out.println("-------------------------");
         ArrayList<Period> userPeriods = User.getLoggedInUser().getPeriods();
         if (userPeriods == null) {
@@ -161,14 +162,14 @@ public class UI {
         }
     }
 
-    public static void createPeriodMenu() {
+    public static void showCreatePeriodMenu() {
         printTitle("Create Period");
         String name = getUserStringInput("Name: ");
         String startDateAndTimeInput = getUserStringInput("Start Date and Time (in 'yyyy-MM-dd HH:mm' format): ");
         Date startDateAndTime = Period.getDateByDateString(startDateAndTimeInput);
         if (startDateAndTime == null) {
             System.out.println("Invalid date and time. try again.");
-            createPeriodMenu();
+            showCreatePeriodMenu();
         }
         Period period = new Period(name, startDateAndTime);
         User.getLoggedInUser().addToPeriods(period);
@@ -235,18 +236,21 @@ public class UI {
         // can edit date name remove purchases.
         Period period = getUserPeriodChoice("Edit Period");
         int userEditChoice = getUserIntInput(
-                "What do you want to edit?\n1- Period name\n2- Periods start date\n3- Remove a purchase\n4- Back\n: ");
+                "What do you want to edit?\n1- Period name\n2- Periods start date\n3- Remove a purchase\n4- Edit purchase\n5- Back\n: ");
         switch (userEditChoice) {
             case 1:
-                editPeriodNameMenu(period);
+                showEditPeriodNameMenu(period);
                 break;
             case 2:
-                editStartDateMenu(period);
+                showEditStartDateMenu(period);
                 break;
             case 3:
-                removePurchaseMenu(period);
+                showRemovePurchaseMenu(period);
                 break;
             case 4:
+                startEditPurchaseSection(period);
+                break;
+            case 5:
                 startUserMainMenuSection();
                 break;
 
@@ -257,7 +261,7 @@ public class UI {
         }
     }
 
-    public static void editPeriodNameMenu(Period period) {
+    public static void showEditPeriodNameMenu(Period period) {
         String newPeriodName = getUserStringInput("what is your new period name? ");
         if (Period.isNameDuplicated(newPeriodName)) {
             System.out.println("another period with this name is already exist. try another name.");
@@ -272,7 +276,7 @@ public class UI {
 
     }
 
-    public static void editStartDateMenu(Period period) {
+    public static void showEditStartDateMenu(Period period) {
         String newStartDateInput = getUserStringInput("What is your period's new start date? ");
         Date startDateAndTime = Period.getDateByDateString(newStartDateInput);
         if (startDateAndTime == null) {
@@ -283,17 +287,35 @@ public class UI {
         System.out.println("start date set to new value successfully!");
     }
 
-    public static void removePurchaseMenu(Period period) {
+    public static void showRemovePurchaseMenu(Period period) {
         System.out.println("List of all purchases in " + period.getName() + " period:");
         Purchase.printListOfPurchases(period.getPurchases());
         int userDeletionChoice = getUserIntInput("Enter the number associated with purchase to delete it: ") - 1;
         if (Purchase.isInvalidIndex(period.getPurchases(), userDeletionChoice)) {
             printInvalidChoice();
-            removePurchaseMenu(period);
+            showRemovePurchaseMenu(period);
         } else {
-            Purchase userDeletedPurchase = period.getPurchases().get(userDeletionChoice);
-            period.getPurchases().remove(userDeletedPurchase);
+            period.getPurchases().remove(period.getPurchases().get(userDeletionChoice));
             System.out.println("chose purchase was deleted successfully!");
         }
+    }
+
+    public static void startEditPurchaseSection(Period period) {
+        System.out.println("List of all purchases in " + period.getName() + " period:");
+        Purchase.printListOfPurchases(period.getPurchases());
+        int userEditPurchaseChoice = getUserIntInput("Enter the number associated with purchase to edit it: ") - 1;
+        if (Purchase.isInvalidIndex(period.getPurchases(), userEditPurchaseChoice)) {
+            printInvalidChoice();
+            startEditPurchaseSection(period);
+        } else {
+            Purchase purchase = period.getPurchases().get(userEditPurchaseChoice);
+            showEditPurchaseMenu(purchase);
+        }
+    }
+
+    public static void showEditPurchaseMenu(Purchase purchase) {
+        int userEditingChoice = getUserIntInput(
+                "What do you want to edit?\n1- Title\n2- Expense\n3- Date and time\n4- Buyer\n5- Purchase User\n6- Back\n: ");
+
     }
 }
