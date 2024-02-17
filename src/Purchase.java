@@ -35,7 +35,9 @@ public class Purchase {
     public ArrayList<PersonCoefficient> getPurchaseUsers() {
         return purchaseUsers;
     }
-
+public void setDateAndTime(Date dateAndTime) {
+    this.dateAndTime = dateAndTime;
+}
     public void setTitle(String title) {
         this.title = title;
     }
@@ -73,5 +75,15 @@ public class Purchase {
     
     public static boolean isInvalidIndex(ArrayList<Purchase> purchases, int purchaseIndexInput) {
         return purchaseIndexInput > purchases.size() - 1 || purchaseIndexInput < 0;
+    }
+
+    public static boolean isTitleDuplicated(Period period, String name) {
+        ArrayList<Purchase> purchases = period.getPurchases();
+        for (int i = 0; i < purchases.size(); i++) {
+            if (purchases.get(i).getTitle().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
