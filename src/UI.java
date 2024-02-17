@@ -12,7 +12,7 @@ public class UI {
             int userActionType = getUserIntInput(":");
             switch (userActionType) {
                 case 1:
-                showRegisterUserMenu();
+                    showRegisterUserMenu();
                     break;
                 case 2:
                     showLoginUserMenu();
@@ -248,7 +248,7 @@ public class UI {
                 showRemovePurchaseMenu(period);
                 break;
             case 4:
-                startEditPurchaseSection(period);
+                startChoosePurchaseSection(period);
                 break;
             case 5:
                 startUserMainMenuSection();
@@ -272,7 +272,7 @@ public class UI {
             startEditPeriodMenu();
         }
         period.setName(newPeriodName);
-        System.out.println("periods name set to new value successfully!");
+        printSuccessfullyEditedMessage("Period name");
 
     }
 
@@ -284,7 +284,7 @@ public class UI {
             startEditPeriodMenu();
         }
         period.setStartDate(startDateAndTime);
-        System.out.println("start date set to new value successfully!");
+        printSuccessfullyEditedMessage("Start Date and Time");
     }
 
     public static void showRemovePurchaseMenu(Period period) {
@@ -300,22 +300,113 @@ public class UI {
         }
     }
 
-    public static void startEditPurchaseSection(Period period) {
+    public static void startChoosePurchaseSection(Period period) {
         System.out.println("List of all purchases in " + period.getName() + " period:");
         Purchase.printListOfPurchases(period.getPurchases());
         int userEditPurchaseChoice = getUserIntInput("Enter the number associated with purchase to edit it: ") - 1;
         if (Purchase.isInvalidIndex(period.getPurchases(), userEditPurchaseChoice)) {
             printInvalidChoice();
-            startEditPurchaseSection(period);
+            startChoosePurchaseSection(period);
         } else {
             Purchase purchase = period.getPurchases().get(userEditPurchaseChoice);
-            showEditPurchaseMenu(purchase);
+            startEditPurchaseMenuSection(period, purchase);
         }
     }
 
-    public static void showEditPurchaseMenu(Purchase purchase) {
-        int userEditingChoice = getUserIntInput(
-                "What do you want to edit?\n1- Title\n2- Expense\n3- Date and time\n4- Buyer\n5- Purchase User\n6- Back\n: ");
-
+    public static void printSuccessfullyEditedMessage(String title) {
+        System.out.println(title + " Edited successfully!");
     }
+
+    public static void startEditPurchaseMenuSection(Period period, Purchase purchase) {
+        int userEditingChoice = getUserIntInput(
+                "What do you want to edit?\n1- Title\n2- Expense\n3- Date and time\n4- Buyer\n5- Purchase Users\n6- Back\n: ");
+        switch (userEditingChoice) {
+            case 1:
+                showEditPurchaseTitleSection(period, purchase);
+                break;
+            case 2:
+                showEditPurchaseExpenseSection(purchase);
+                break;
+            case 3:
+                showEditPurchaseDateAndTimeSection(period, purchase);
+                break;
+            case 4:
+                showEditBuyerSection(period, purchase);
+                break;
+            case 5:
+                showEditPurchaseUsersSection(period, purchase);
+                break;
+            case 6:
+                startEditPeriodMenu();
+                break;
+            default:
+                printInvalidChoice();
+                startEditPurchaseMenuSection(period, purchase);
+                break;
+        }
+    }
+
+    public static void showEditPurchaseTitleSection(Period period, Purchase purchase) {
+        String newTitle = getUserStringInput("Enter new title: ");
+        if (Purchase.isTitleDuplicated(period, newTitle)) {
+            System.out.println("another purchase with this title exists in this period. try another title.");
+            startEditPurchaseMenuSection(period, purchase);
+        } else {
+            purchase.setTitle(newTitle);
+            printSuccessfullyEditedMessage("Title");
+        }
+    }
+
+    public static void showEditPurchaseExpenseSection(Purchase purchase) {
+        int newExpense = getUserIntInput("Enter new Expense: ");
+        purchase.setExpense(newExpense);
+        printSuccessfullyEditedMessage("Expense");
+    }
+
+    public static void showEditPurchaseDateAndTimeSection(Period period, Purchase purchase) {
+        String newDateAndTimeInput = getUserStringInput("Enter new Date and Time: ");
+        Date newDateAndTime = Period.getDateByDateString(newDateAndTimeInput);
+        if (newDateAndTime == null) {
+            System.out.println("Invalid date and time. try again.");
+            startEditPurchaseMenuSection(period, purchase);
+        } else {
+            purchase.setDateAndTime(newDateAndTime);
+            printSuccessfullyEditedMessage("Date and Time");
+        }
+    }
+
+    public static void showEditBuyerSection(Period period, Purchase purchase) {
+        ArrayList<Person> persons = period.getPersons();
+        Person.printPersons(persons);
+        int userNewBuyerChoice = getUserIntInput("Which person do you want to be purchase's new buyer? ") - 1;
+        if (Person.isInvalidIndex(persons, userNewBuyerChoice)) {
+            printInvalidChoice();
+            startEditPurchaseMenuSection(period, purchase);
+        } else {
+            Person person = persons.get(userNewBuyerChoice);
+            purchase.setBuyer(person);
+            printSuccessfullyEditedMessage("Buyer");
+        }
+    }
+
+    public static void showEditPurchaseUsersSection(Period period, Purchase purchase) {
+        int purchaseUserEditChoice = getUserIntInput("1- Add new purchase User\n2- Remove purchase user\n3- Back\n: ");
+        switch (purchaseUserEditChoice) {
+            case 1:
+            
+                break;
+            case 2:
+
+                break;
+            case 3:
+                startEditPurchaseMenuSection(period, purchase);
+                break;
+
+            default:
+                printInvalidChoice();
+                showEditPurchaseUsersSection(period, purchase);
+                break;
+        }
+    }
+
 }
