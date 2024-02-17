@@ -64,7 +64,6 @@ public class User {
         }
         return false;
     }
-
     
     public static User getUserObject(String username, String password) {
         for (int i = 0; i < Database.users.size(); i++) {

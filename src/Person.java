@@ -57,4 +57,9 @@ public class Person {
             }
         }
     }
+
+    public static boolean isInvalidIndex(ArrayList<Person> persons, int personIndexInput) {
+        return personIndexInput > persons.size() - 1 || personIndexInput < 0;
+    }
+
 }
