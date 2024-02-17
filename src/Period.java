@@ -88,10 +88,8 @@ public class Period {
             for (int index = 0; index < periods.size(); index++) {
                 Period period = periods.get(index);
                 System.out.printf(format, (index + 1), period.getName(), period.getStartDate());
-
                 Person.printPersons(period.getPersons());
                 UI.printPurchasesInPeriod(period);
-
                 System.out.println(
                         "---------------------------------------------------------------------------------------------------------");
             }
@@ -101,7 +99,7 @@ public class Period {
     public int getTotalExpenses() {
         int expenses = 0;
         for (int index = 0; index < this.purchases.size(); index++) {
-            expenses += this.purchases.get(index).getExpense();
+            expenses += this.getPurchases().get(index).getExpense();
         }
         return expenses;
     }
@@ -120,11 +118,7 @@ public class Period {
     }
 
     public double getOverallPersonAverageExpense(){
-        int totalExpenses = 0;
-        for (int index = 0; index < this.getPurchases().size(); index++) {
-            totalExpenses += this.getPurchases().get(index).getExpense();
-        }
-        return totalExpenses / this.getPurchases().size();
+        return this.getTotalExpenses() / this.getPurchases().size();
     }
 
     public HashMap<Person, Integer> getPersonsDirectExpenses() {
