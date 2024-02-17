@@ -2,8 +2,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
-import javax.jws.soap.SOAPBinding.Use;
-
 public class UI {
     private static Scanner inputReader = new Scanner(System.in);
 
@@ -33,14 +31,20 @@ public class UI {
 
     public static void registerUserMenu() {
         String username = getUserStringInput("\nUsername: ");
-        String password = getUserStringInput("Password: ");
-        String name = getUserStringInput("Name: ");
         if (User.doesUsernameExist(username)) {
             System.out.println("User with this username is already exist try another one.");
             registerUserMenu();
         }
-        User.registerUser(username, password, name);
-        System.out.println("User created successfully");
+        String password = getUserStringInput("Password: ");
+        String name = getUserStringInput("Name: ");
+        if (Utils.isStringEmptyOrNull(username) || Utils.isStringEmptyOrNull(name)
+                || Utils.isStringEmptyOrNull(password)) {
+            System.out.println("username or password or name cannot be empty.");
+            registerUserMenu();
+        } else {
+            User.registerUser(username, password, name);
+            System.out.println("User created successfully");
+        }
 
     }
 
@@ -116,7 +120,7 @@ public class UI {
                 startPeriodDetailMenu();
                 break;
             case 4:
-
+                startEditPeriodMenu();
                 break;
             case 5:
 
@@ -142,45 +146,21 @@ public class UI {
             System.out.println("You have '0' periods");
             startUserMainMenuSection();
         }
-        System.out.println("You have '" + userPeriods.size() + "' periods");
-        printPeriods(userPeriods);
+        Period.printListOfPeriods(userPeriods);
         startUserMainMenuSection();
     }
 
-    public static void printPeriods(ArrayList<Period> periods) {
-        if (periods.size() == 0) {
-            System.out.println("No period exist yet.");
+    public static void printPurchasesInPeriod(Period period) {
+        printTitle("Purchases in this period: ");
+        if (period.getPurchases() == null) {
+            System.out.println("No purchases");
         } else {
-
-            String format = "|%-10s  |%-25s|%-35s|%n";
-            System.out.printf(format, "NO.", "Name", "Start Date");
-            System.out
-                    .print(String.format("|%012d|%025d|%035d|%n", 0, 0, 0)
-                            .replace("0", "-"));
-            for (int index = 0; index < periods.size(); index++) {
-                Period period = periods.get(index);
-                System.out.printf(format, (index + 1), period.getName(), period.getStartDate());
-
-                printTitle("Persons involved in this period:");
-                if (period.getPersons() == null) {
-                    System.out.println("No person");
-                } else {
-                    for (int i = 0; i < period.getPersons().size(); i++) {
-                        System.out.print(period.getPersons().get(i).getName() + ", ");
-                    }
-                }
-                printTitle("Purchases in this period: ");
-                if (period.getPurchases() == null) {
-                    System.out.println("No purchases");
-                } else {
-                    for (int i = 0; i < period.getPurchases().size(); i++) {
-                        System.out.print(period.getPurchases().get(i).getTitle() + ", ");
-                    }
-                }
-                System.out.println("---------------------------------------------------------------------------------------------------------");
+            for (int i = 0; i < period.getPurchases().size(); i++) {
+                System.out.print(period.getPurchases().get(i).getTitle() + ", ");
             }
         }
     }
+
     public static void createPeriodMenu() {
         printTitle("Create Period");
         String name = getUserStringInput("Name: ");
@@ -223,24 +203,97 @@ public class UI {
         return persons;
     }
 
-    public static ArrayList<Purchase> getPurchaseInputs() {
-        ArrayList<Purchase> purchases = new ArrayList<Purchase>();
-        while (true) {
-            String title = getUserStringInput("Title: ");
-            int expense = getUserIntInput("Expense: ");
+    // public static ArrayList<Purchase> getPurchaseInputs() {
+    // ArrayList<Purchase> purchases = new ArrayList<Purchase>();
+    // while (true) {
+    // String title = getUserStringInput("Title: ");
+    // int expense = getUserIntInput("Expense: ");
 
-        }
-    }
+    // }
+    // }
 
-    public static void startPeriodDetailMenu() {
-        printTitle("Period Detail");
+    public static Period getUserPeriodChoice(String title) {
+        printTitle(title);
         ArrayList<Period> periods = User.getLoggedInUser().getPeriods();
-        printPeriods(periods);
-        int periodIndexInput = getUserIntInput("Enter Period number to see details: ") - 1;
-        if (periodIndexInput > periods.size() - 1 || periodIndexInput < 0) {
+        Period.printListOfPeriods(periods);
+        int periodIndexInput = getUserIntInput("Enter Period number: ") - 1;
+        if (Period.isInvalidIndex(periods, periodIndexInput)) {
             printInvalidChoice();
             startPeriodDetailMenu();
         }
-        Period.printPeriodDetail(periods.get(periodIndexInput));
+        // Period.printPeriodDetail(periods.get(periodIndexInput));
+        return periods.get(periodIndexInput);
+
+    }
+
+    public static void startPeriodDetailMenu() {
+        Period period = getUserPeriodChoice("Periods Details");
+        Period.printPeriodDetail(period);
+    }
+
+    public static void startEditPeriodMenu() {
+        // can edit date name remove purchases.
+        Period period = getUserPeriodChoice("Edit Period");
+        int userEditChoice = getUserIntInput(
+                "What do you want to edit?\n1- Period name\n2- Periods start date\n3- Remove a purchase\n4- Back\n: ");
+        switch (userEditChoice) {
+            case 1:
+                editPeriodNameMenu(period);
+                break;
+            case 2:
+                editStartDateMenu(period);
+                break;
+            case 3:
+                removePurchaseMenu(period);
+                break;
+            case 4:
+                startUserMainMenuSection();
+                break;
+
+            default:
+                printInvalidChoice();
+                startEditPeriodMenu();
+                break;
+        }
+    }
+
+    public static void editPeriodNameMenu(Period period) {
+        String newPeriodName = getUserStringInput("what is your new period name? ");
+        if (Period.isNameDuplicated(newPeriodName)) {
+            System.out.println("another period with this name is already exist. try another name.");
+            startEditPeriodMenu();
+        }
+        if (Utils.isStringEmptyOrNull(newPeriodName)) {
+            System.out.println("invalid name. name of period cant be blank.");
+            startEditPeriodMenu();
+        }
+        period.setName(newPeriodName);
+        System.out.println("periods name set to new value successfully!");
+
+    }
+
+    public static void editStartDateMenu(Period period) {
+        String newStartDateInput = getUserStringInput("What is your period's new start date? ");
+        Date startDateAndTime = Period.getDateByDateString(newStartDateInput);
+        if (startDateAndTime == null) {
+            System.out.println("Invalid date and time. try again.");
+            startEditPeriodMenu();
+        }
+        period.setStartDate(startDateAndTime);
+        System.out.println("start date set to new value successfully!");
+    }
+
+    public static void removePurchaseMenu(Period period) {
+        System.out.println("List of all purchases in " + period.getName() + " period:");
+        Purchase.printListOfPurchases(period.getPurchases());
+        int userDeletionChoice = getUserIntInput("Enter the number associated with purchase to delete it: ") - 1;
+        if (Purchase.isInvalidIndex(period.getPurchases(), userDeletionChoice)) {
+            printInvalidChoice();
+            removePurchaseMenu(period);
+        } else {
+            Purchase userDeletedPurchase = period.getPurchases().get(userDeletionChoice);
+            period.getPurchases().remove(userDeletedPurchase);
+            System.out.println("chose purchase was deleted successfully!");
+        }
     }
 }
