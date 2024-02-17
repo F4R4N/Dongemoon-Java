@@ -41,4 +41,20 @@ public class Person {
         person = new Person(personInput);
         return person;
     }
+
+    public static void printPersons(ArrayList<Person> persons) {
+        if (persons.size()==0) {
+            System.out.println("No person exist yet");
+        } else {
+            String format = "|%-10s  |%-30s|%n";
+            System.out.printf(format, "NO.", "Name");
+            System.out
+                    .print(String.format("|%012d|%030d|%n", 0, 0)
+                            .replace("0", "-"));
+            for (int index = 0; index < persons.size(); index++) {
+                Person person = persons.get(index);
+                System.out.printf(format, (index + 1), person.getName());
+            }
+        }
+    }
 }
