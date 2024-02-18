@@ -76,6 +76,7 @@ public class Period {
             }
         }
     }
+
     public static void printPeriods(ArrayList<Period> periods) {
         if (periods.size() == 0) {
             System.out.println("No period exist yet.");
@@ -110,31 +111,39 @@ public class Period {
         System.out.println("Number of persons involved in this period: " + period.persons.size());
         System.out.println("Total Expenses: " + period.getTotalExpenses());
         System.out.println("Number of purchases in period: " + period.getPurchases().size());
-        System.out.println("Each persons average expense: "+ period.getOverallPersonAverageExpense());
+        System.out.println("Each persons average expense: " + period.getOverallPersonAverageExpense());
         HashMap<Person, Integer> personDirectExpenses = period.getPersonsDirectExpenses();
         printPersonsDirectExpenses(period, personDirectExpenses);
 
-
     }
 
-    public double getOverallPersonAverageExpense(){
-        return this.getTotalExpenses() / this.getPurchases().size();
+    public double getOverallPersonAverageExpense() {
+        if (this.getPurchases().size() == 0) {
+            return 0;
+        } else {
+            return this.getTotalExpenses() / this.getPurchases().size();
+        }
     }
 
     public HashMap<Person, Integer> getPersonsDirectExpenses() {
-        HashMap<Person, Integer> personsAverageExpenses = new HashMap<Person, Integer>();
+        HashMap<Person, Integer> personsDirectExpenses = new HashMap<Person, Integer>();
         for (int index = 0; index < this.purchases.size(); index++) {
             Purchase purchase = this.purchases.get(index);
-            personsAverageExpenses.put(purchase.getBuyer(),
-                    personsAverageExpenses.getOrDefault(purchase.getBuyer(), 0) + purchase.getExpense());
+            Integer personExpenseSum = personsDirectExpenses.getOrDefault(purchase.getBuyer(), 0)
+                    + purchase.getExpense();
+            personsDirectExpenses.put(purchase.getBuyer(), personExpenseSum);
         }
-        return personsAverageExpenses;
+        return personsDirectExpenses;
     }
 
     // TODO: TEST WITH PERSON AN PURCHASES
-    public static void printPersonsDirectExpenses(Period period, HashMap<Person, Integer> personAverageExpenses) {
-        System.out.println("Persons average expenses in '" + period.getName() + "'s' period.");
-        for (Map.Entry<Person, Integer> entry : personAverageExpenses.entrySet()) {
+    public static void printPersonsDirectExpenses(Period period, HashMap<Person, Integer> personDirectExpenses) {
+        System.out
+                .println("Persons Direct expenses in '" + period.getName() + "'s' period:\n-------------------------------------------------");
+        if (personDirectExpenses.isEmpty()) {
+            System.out.println("No person or purchases Exist yet.");
+        }
+        for (Map.Entry<Person, Integer> entry : personDirectExpenses.entrySet()) {
             Person person = entry.getKey();
             Integer directExpense = entry.getValue();
             System.out.println("'" + person.getName() + "' has direct expense of: '" + directExpense + "'");
