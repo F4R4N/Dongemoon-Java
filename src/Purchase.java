@@ -77,7 +77,9 @@ public class Purchase {
                 Purchase purchase = purchases.get(index);
                 System.out.printf(format, (index + 1), purchase.getTitle(), purchase.getDateAndTime(),
                         purchase.getExpense(), purchase.getBuyer().getName());
+                UI.printTitle("Purchase Users");
                 PersonCoefficient.printPersonCoefficients(purchase.getPurchaseUsers());
+                System.out.println();
             }
 
         }

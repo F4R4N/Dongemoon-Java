@@ -28,7 +28,7 @@ public class PersonCoefficient {
             String format = "|%-10s  |%-30s|%-10s|%n";
             System.out.printf(format, "NO.", "Name", "Coefficient");
             System.out
-                    .print(String.format("|%012d|%030d|%-10s|%n", 0, 0,0)
+                    .print(String.format("|%012d|%030d|%010d|%n", 0, 0,0)
                             .replace("0", "-"));
             for (int index = 0; index < persons.size(); index++) {
                 PersonCoefficient person = persons.get(index);

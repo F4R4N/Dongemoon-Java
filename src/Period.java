@@ -162,4 +162,19 @@ public class Period {
         }
         return false;
     }
+
+    public static boolean isPersonInvolvedInPurchases(Period period, Person person){
+        boolean isInvolved = false;
+        for (int i = 0; i < period.getPurchases().size(); i++) {
+            if (period.getPurchases().get(i).getBuyer() == person) {
+                isInvolved = true;
+            }
+            for (int j = 0; j < period.getPurchases().get(i).getPurchaseUsers().size(); j++) {
+                if (period.getPurchases().get(i).getPurchaseUsers().get(j).getPerson()==person) {
+                    isInvolved=true;
+                }
+            }
+        }
+        return isInvolved;
+    }
 }
