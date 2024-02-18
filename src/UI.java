@@ -163,7 +163,7 @@ public class UI {
         String startDateAndTimeInput = getUserStringInput("Start Date and Time (in 'yyyy-MM-dd HH:mm' format): ");
         Date startDateAndTime = Period.getDateByDateString(startDateAndTimeInput);
         if (startDateAndTime == null) {
-            System.out.println("Invalid date and time. try again.");
+            printInvalidDateAndTime();
             showCreatePeriodMenu();
         }
         Period period = new Period(name, startDateAndTime);
@@ -171,6 +171,10 @@ public class UI {
         printSuccessfullyCreatedMessage("Period");
         startUserMainMenuSection();
 
+    }
+
+    public static void printInvalidDateAndTime(){
+        System.out.println("Invalid date and time. try again.");
     }
 
     // public static ArrayList<Person> getPersonInputs() {
@@ -210,7 +214,7 @@ public class UI {
     // }
 
     public static Period getUserPeriodChoice(String title, ArrayList<Period> periods) {
-        printTitle(title);
+        System.out.println(title);
         // ArrayList<Period> periods = User.getLoggedInUser().getPeriods();
         Period.printListOfPeriods(periods);
         int periodIndexInput = getUserIntInput("Enter Period number: ") - 1;
@@ -220,12 +224,10 @@ public class UI {
         } else {
             return periods.get(periodIndexInput);
         }
-        // Period.printPeriodDetail(periods.get(periodIndexInput));
-
     }
 
     public static void startPeriodDetailMenu() {
-        Period period = getUserPeriodChoice("Periods Details", User.getLoggedInUser().getPeriods());
+        Period period = getUserPeriodChoice("See Periods Details", User.getLoggedInUser().getPeriods());
         if (period == null) {
             startUserMainMenuSection();
         } else {
@@ -294,7 +296,7 @@ public class UI {
         String newStartDateInput = getUserStringInput("What is your period's new start date? ");
         Date startDateAndTime = Period.getDateByDateString(newStartDateInput);
         if (startDateAndTime == null) {
-            System.out.println("Invalid date and time. try again.");
+            printInvalidDateAndTime();
             startEditPeriodMenu();
         }
         period.setStartDate(startDateAndTime);
@@ -315,17 +317,17 @@ public class UI {
     }
 
     public static void showRemovePersonMenu(Period period) {
-        ArrayList<Person> persons = period.getPersons();
-        Person.printPersons(persons);
-        int userPersonRemoveChoice = getUserIntInput(
-                "Which person do you want to remove from period? enter the number associated with it: ") - 1;
-        if (Person.isInvalidIndex(persons, userPersonRemoveChoice)) {
-            printInvalidChoice();
+        Person person = getUserPersonChoice("Which person do you want to remove from period? enter the number associated with it: ", period.getPersons());
+        if (person==null) {
             startEditPeriodMenu();
         } else {
-            persons.remove(persons.get(userPersonRemoveChoice));
-            System.out.println("Person remove successfully!");
+            period.getPersons().remove(person);
+            printSuccessfullyDeletedMessage("Person");
         }
+    }
+
+    public static void printSuccessfullyDeletedMessage(String title){
+        System.out.println(title+ "Deleted successfully!");
     }
 
     public static void startChoosePurchaseSection(Period period) {
@@ -399,7 +401,7 @@ public class UI {
         String newDateAndTimeInput = getUserStringInput("Enter new Date and Time: ");
         Date newDateAndTime = Period.getDateByDateString(newDateAndTimeInput);
         if (newDateAndTime == null) {
-            System.out.println("Invalid date and time. try again.");
+            printInvalidDateAndTime();
             startEditPurchaseMenuSection(period, purchase);
         } else {
             purchase.setDateAndTime(newDateAndTime);
@@ -408,14 +410,10 @@ public class UI {
     }
 
     public static void showEditBuyerSection(Period period, Purchase purchase) {
-        ArrayList<Person> persons = period.getPersons();
-        Person.printPersons(persons);
-        int userNewBuyerChoice = getUserIntInput("Which person do you want to be purchase's new buyer? ") - 1;
-        if (Person.isInvalidIndex(persons, userNewBuyerChoice)) {
-            printInvalidChoice();
+        Person person = getUserPersonChoice("Which person do you want to be purchase's new buyer? ", period.getPersons());
+        if (person==null) {
             startEditPurchaseMenuSection(period, purchase);
         } else {
-            Person person = persons.get(userNewBuyerChoice);
             purchase.setBuyer(person);
             printSuccessfullyEditedMessage("Buyer");
         }
@@ -442,15 +440,11 @@ public class UI {
 
     public static void printAddPurchaseUserSection(Period period, Purchase purchase) {
         printTitle("Add person to purchase users");
-        ArrayList<Person> persons = period.getPersons();
-        Person.printPersons(persons);
-        int userPersonChoice = getUserIntInput("Enter persons number to add it to purchase users: ") - 1;
+        Person person = getUserPersonChoice("Choose person to add it to purchase users: ", period.getPersons());
         int purchaseUserCoefficientChoice = getUserIntInput("What is this persons coefficient? ");
-        if (Person.isInvalidIndex(persons, userPersonChoice)) {
-            printInvalidChoice();
+        if (person == null) {
             showEditPurchaseUsersSection(period, purchase);
         } else {
-            Person person = persons.get(userPersonChoice);
             if (PersonCoefficient.doesPersonExistInPurchaseUsers(purchase, person)) {
                 System.out.println("This person is already in purchase users. try another person.");
                 showEditPurchaseUsersSection(period, purchase);
@@ -463,7 +457,7 @@ public class UI {
     }
 
     public static void printRemovePurchaseUserSection(Period period, Purchase purchase) {
-        printTitle("remove person from purchase users");
+        printTitle("Remove Purchase Users");
         ArrayList<PersonCoefficient> purchaseUsers = purchase.getPurchaseUsers();
         PersonCoefficient.printPersonCoefficients(purchaseUsers);
         int userDeleteChoice = getUserIntInput("Which purchase user do you want to remove (enter the number)? ") - 1;
@@ -488,6 +482,7 @@ public class UI {
     }
 
     public static void startAddPersonToPeriodSection(Period period) {
+        printTitle("Add Person");
         String userPersonNameInput = getUserStringInput("What is the new person's name? ");
         if (Person.isNameDuplicated(period.getPersons(), userPersonNameInput)) {
             System.out.println("Another person with this name already exist in this period. try another name.");
@@ -498,7 +493,29 @@ public class UI {
         }
     }
 
+    public static Person getUserPersonChoice(String title, ArrayList<Person> persons) {
+        System.out.println(title);
+        Person.printPersons(persons);
+        int personIndexInput = getUserIntInput("Enter Person number: ") - 1;
+        if (Person.isInvalidIndex(persons, personIndexInput)) {
+            printInvalidChoice();
+            return null;
+        } else {
+            return persons.get(personIndexInput);
+        }
+    }
+
     public static void startAddPurchaseToPeriodSection(Period period){
+        printTitle("Create Purchase");
+        String title = getUserStringInput("Title: ");
+        int expense = getUserIntInput("Expense: ");
+        String dateAndTimeInput = getUserStringInput("Date And Time (in 'yyyy-MM-dd HH:mm' format): ");
+        Date dateAndTime = Period.getDateByDateString(dateAndTimeInput);
+        if (dateAndTime ==null) {
+            printInvalidDateAndTime();
+            startEditPeriodMenu();
+        }
+        Person buyer = getUserPersonChoice("Choose Buyer: ", period.getPersons());
         
     }
 
