@@ -43,7 +43,7 @@ public class UI {
             showRegisterUserMenu();
         } else {
             User.registerUser(username, password, name);
-            System.out.println("User created successfully");
+            printSuccessfullyCreatedMessage("User");
         }
     }
 
@@ -122,7 +122,7 @@ public class UI {
                 startEditPeriodMenu();
                 break;
             case 5:
-
+                startRemovePeriodSection();
                 break;
             case 6:
 
@@ -144,12 +144,8 @@ public class UI {
     }
 
     public static void printListOfPeriods() {
-        System.out.println("-------------------------");
+        printTitle("List of Periods");
         ArrayList<Period> userPeriods = User.getLoggedInUser().getPeriods();
-        if (userPeriods == null) {
-            System.out.println("You have '0' periods");
-            startUserMainMenuSection();
-        }
         Period.printListOfPeriods(userPeriods);
         startUserMainMenuSection();
     }
@@ -176,7 +172,7 @@ public class UI {
         }
         Period period = new Period(name, startDateAndTime);
         User.getLoggedInUser().addToPeriods(period);
-        System.out.println("Period created successfully!!");
+        printSuccessfullyCreatedMessage("Period");
         startUserMainMenuSection();
 
     }
@@ -254,7 +250,7 @@ public class UI {
                 showRemovePersonMenu(period);
                 break;
             case 5:
-                startChoosePurchaseSection(period); // TODO:unfinished
+                startChoosePurchaseSection(period);
                 break;
             case 6:
                 startUserMainMenuSection();
@@ -336,6 +332,10 @@ public class UI {
         System.out.println(title + " Edited successfully!");
     }
 
+    public static void printSuccessfullyCreatedMessage(String title){
+        System.out.println(title+" Created successfully!");
+    }
+
     public static void startEditPurchaseMenuSection(Period period, Purchase purchase) {
         int userEditingChoice = getUserIntInput(
                 "What do you want to edit?\n1- Title\n2- Expense\n3- Date and time\n4- Buyer\n5- Purchase Users\n6- Back\n: ");
@@ -412,19 +412,71 @@ public class UI {
         int purchaseUserEditChoice = getUserIntInput("1- Add new purchase User\n2- Remove purchase user\n3- Back\n: ");
         switch (purchaseUserEditChoice) {
             case 1:
-
+                printAddPurchaseUserSection(period, purchase);
                 break;
             case 2:
-
+                printRemovePurchaseUserSection(period, purchase);
                 break;
             case 3:
                 startEditPurchaseMenuSection(period, purchase);
                 break;
-
             default:
                 printInvalidChoice();
                 showEditPurchaseUsersSection(period, purchase);
                 break;
         }
     }
+
+    public static void printAddPurchaseUserSection(Period period, Purchase purchase){
+        printTitle("Add person to purchase users");
+        ArrayList<Person> persons = period.getPersons();
+        Person.printPersons(persons);
+        int userPersonChoice = getUserIntInput("Enter persons number to add it to purchase users: ")-1;
+        int purchaseUserCoefficientChoice = getUserIntInput("What is this persons coefficient? ");
+        if (Person.isInvalidIndex(persons, userPersonChoice)) {
+            printInvalidChoice();
+            showEditPurchaseUsersSection(period, purchase);
+        }  else{
+            Person person = persons.get(userPersonChoice);
+            if (PersonCoefficient.doesPersonExistInPurchaseUsers(purchase, person)) {
+                System.out.println("This person is already in purchase users. try another person.");
+                showEditPurchaseUsersSection(period, purchase);
+            }else{
+                PersonCoefficient newPurchaseUser = new PersonCoefficient(person, purchaseUserCoefficientChoice);
+                purchase.addToPurchaseUsers(newPurchaseUser);
+                printSuccessfullyCreatedMessage("Purchase User");
+            }
+        }
+    }
+
+    public static void printRemovePurchaseUserSection(Period period, Purchase purchase){
+        printTitle("remove person from purchase users");
+        ArrayList<PersonCoefficient> purchaseUsers = purchase.getPurchaseUsers();
+        PersonCoefficient.printPersonCoefficients(purchaseUsers);
+        int userDeleteChoice = getUserIntInput("Which purchase user do you want to remove (enter the number)? ")-1;
+        if (PersonCoefficient.isInvalidIndex(purchaseUsers, userDeleteChoice)) {
+            printInvalidChoice();
+            showEditPurchaseUsersSection(period, purchase);
+        }else{
+            PersonCoefficient personCoefficient = purchaseUsers.get(userDeleteChoice);
+            purchase.removeFromPurchaseUsers(personCoefficient);
+            System.out.println("Purchase user removed successfully!");
+        }
+    }
+
+    public static void startRemovePeriodSection(){
+        printTitle("Remove Period");
+        ArrayList<Period> periods = User.getLoggedInUser().getPeriods();
+        Period.printListOfPeriods(periods);
+        int userPeriodRemoveChoice = getUserIntInput("Which period do you which to remove (enter the number)? ")-1;
+        if (Period.isInvalidIndex(periods, userPeriodRemoveChoice)) {
+            printInvalidChoice();
+            printUserMainMenu();
+        }else{
+            Period period = periods.get(userPeriodRemoveChoice);
+            User.getLoggedInUser().removePeriod(period);
+            System.out.println("Period removed successfully!");
+        }
+    }
+
 }
