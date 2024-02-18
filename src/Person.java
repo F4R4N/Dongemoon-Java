@@ -62,4 +62,13 @@ public class Person {
         return personIndexInput > persons.size() - 1 || personIndexInput < 0;
     }
 
+    public static boolean isNameDuplicated(ArrayList<Person> persons, String name){
+        for (int index = 0; index < persons.size(); index++) {
+            if (persons.get(index).getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
