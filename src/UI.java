@@ -291,6 +291,7 @@ public class UI {
     }
 
     public static void showEditPeriodNameMenu(Period period) {
+        printTitle("Edit Name");
         String newPeriodName = getUserStringInput("what is your new period name? ");
         if (Period.isNameDuplicated(newPeriodName)) {
             System.out.println("another period with this name is already exist. try another name.");
@@ -306,6 +307,7 @@ public class UI {
     }
 
     public static void showEditStartDateMenu(Period period) {
+        printTitle("Edit Start Date");
         String newStartDateInput = getUserStringInput("What is your period's new start date? ");
         Date startDateAndTime = Period.getDateByDateString(newStartDateInput);
         if (startDateAndTime == null) {
@@ -317,6 +319,7 @@ public class UI {
     }
 
     public static void showRemovePurchaseMenu(Period period) {
+        printTitle("Delete Purchase");
         System.out.println("List of all purchases in " + period.getName() + " period:");
         Purchase.printListOfPurchases(period.getPurchases());
         int userDeletionChoice = getUserIntInput("Enter the number associated with purchase to delete it: ") - 1;
@@ -330,6 +333,7 @@ public class UI {
     }
 
     public static void showRemovePersonMenu(Period period) {
+        printTitle("Delete Person");
         Person person = getUserPersonChoice(
                 "Which person do you want to remove from period? enter the number associated with it: ",
                 period.getPersons());
@@ -346,6 +350,7 @@ public class UI {
     }
 
     public static void startChoosePurchaseSection(Period period) {
+        printTitle("Edit Purchase");
         System.out.println("List of all purchases in " + period.getName() + " period:");
         Purchase.printListOfPurchases(period.getPurchases());
         int userEditPurchaseChoice = getUserIntInput("Enter the number associated with purchase to edit it: ") - 1;
@@ -537,6 +542,7 @@ public class UI {
         Person buyer = getUserPersonChoice("Choose Buyer: ", period.getPersons());
         ArrayList<PersonCoefficient> purchaseUsers = getPurchaseUsers(period);
         Purchase purchase = new Purchase(title, expense, buyer, purchaseUsers, dateAndTime);
+        period.addPurchase(purchase);
         printSuccessfullyCreatedMessage("Purchase");
     }
 
