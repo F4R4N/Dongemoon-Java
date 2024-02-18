@@ -122,7 +122,7 @@ public class UI {
                 break;
             case 3:
                 startPeriodDetailMenu(); // TODO:unfinished - have to add menu that in it we can implement sort and
-                                         // filter (filter for buyer and purchase user)(sort for expense and start datee
+                                         // filter (filter for buyer and purchase user)(sort for expense and start date
                                          // and time)
                 break;
             case 4:
@@ -289,6 +289,9 @@ public class UI {
             }
         }
     }
+
+    // TODO: should check if person exist in period before creating purchase
+    //TODO: in period detail and edit period and remove period should check if a period exist first.
 
     public static void showEditPeriodNameMenu(Period period) {
         printTitle("Edit Name");

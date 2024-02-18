@@ -136,7 +136,6 @@ public class Period {
         return personsDirectExpenses;
     }
 
-    // TODO: TEST WITH PERSON AN PURCHASES
     public static void printPersonsDirectExpenses(Period period, HashMap<Person, Integer> personDirectExpenses) {
         System.out
                 .println("Persons Direct expenses in '" + period.getName() + "'s' period:\n-------------------------------------------------");
