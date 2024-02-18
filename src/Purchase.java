@@ -57,10 +57,11 @@ public class Purchase {
         this.purchaseUsers = purchaseUsers;
     }
 
-    public void addToPurchaseUsers(PersonCoefficient personCoefficient){
+    public void addToPurchaseUsers(PersonCoefficient personCoefficient) {
         this.purchaseUsers.add(personCoefficient);
     }
-    public void removeFromPurchaseUsers(PersonCoefficient personCoefficient){
+
+    public void removeFromPurchaseUsers(PersonCoefficient personCoefficient) {
         this.purchaseUsers.remove(personCoefficient);
     }
 
@@ -97,5 +98,30 @@ public class Purchase {
             }
         }
         return false;
+    }
+
+    public static ArrayList<Purchase> getBuyerFilteredPurchases(Period period, Person person) {
+        ArrayList<Purchase> filteredPurchases = new ArrayList<Purchase>();
+        for (int i = 0; i < period.getPurchases().size(); i++) {
+            Purchase purchase = period.getPurchases().get(i);
+            if (purchase.getBuyer() == person) {
+                filteredPurchases.add(purchase);
+            }
+        }
+        return filteredPurchases;
+    }
+
+    public static ArrayList<Purchase> getPurchaseUsersFilteredPurchases(Period period, Person person) {
+        ArrayList<Purchase> filteredPurchases = new ArrayList<Purchase>();
+        for (int i = 0; i < period.getPurchases().size(); i++) {
+            Purchase purchase = period.getPurchases().get(i);
+            for (int j = 0; j < purchase.getPurchaseUsers().size(); j++) {
+                PersonCoefficient purchaseUser = purchase.getPurchaseUsers().get(j);
+                if (purchaseUser.getPerson() == person) {
+                    filteredPurchases.add(purchase);
+                }
+            }
+        }
+        return filteredPurchases;
     }
 }

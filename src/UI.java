@@ -125,9 +125,6 @@ public class UI {
             case 3:
                 startPeriodDetailMenu();
                 startUserMainMenuSection();
-                // TODO:unfinished - have to add menu that in it we can implement sort and
-                // filter (filter for buyer and purchase user)(sort for expense and start date
-                // and time)
                 break;
             case 4:
                 startEditPeriodMenu();
@@ -220,10 +217,12 @@ public class UI {
                 "\n1- Filter by buyer\n2- Filter by purchase user\n3- Sort by date and time\n4- Sort by expense\n5- Back\n: ");
         switch (userActionChoice) {
             case 1:
-                
+                printPurchasesFilteredByBuyer(period);
+                startPurchaseSortAndFilterMenu(period);
                 break;
             case 2:
-
+                printPurchasesFilteredByPurchaseUsers(period);
+                startPurchaseSortAndFilterMenu(period);
                 break;
             case 3:
 
@@ -238,6 +237,27 @@ public class UI {
                 printInvalidChoice();
                 startPurchaseSortAndFilterMenu(period);
                 break;
+        }
+    }
+
+    public static void printPurchasesFilteredByBuyer(Period period) {
+        Person person = getUserPersonChoice("Based on which person do you want to filter buyer results? ",
+                period.getPersons());
+        if (person == null) {
+            startPurchaseSortAndFilterMenu(period);
+        } else {
+            ArrayList<Purchase> filteredPurchases = Purchase.getBuyerFilteredPurchases(period, person);
+            Purchase.printListOfPurchases(filteredPurchases);
+        }
+    }
+
+    public static void printPurchasesFilteredByPurchaseUsers(Period period) {
+        Person purchaseUser = getUserPersonChoice("Based on which person do you want to filter purchase Users results?", period.getPersons());
+        if (purchaseUser == null) {
+            startPurchaseSortAndFilterMenu(period);
+        }else{
+            ArrayList<Purchase> filteredPurchases = Purchase.getPurchaseUsersFilteredPurchases(period, purchaseUser);
+            Purchase.printListOfPurchases(filteredPurchases);
         }
     }
 
@@ -455,9 +475,11 @@ public class UI {
         switch (purchaseUserEditChoice) {
             case 1:
                 printAddPurchaseUserSection(period, purchase);
+                showEditPurchaseUsersSection(period, purchase);
                 break;
             case 2:
                 printRemovePurchaseUserSection(period, purchase);
+                showEditPurchaseUsersSection(period, purchase);
                 break;
             case 3:
                 startEditPurchaseMenuSection(period, purchase);
