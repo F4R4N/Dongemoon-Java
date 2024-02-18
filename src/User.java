@@ -36,6 +36,9 @@ public class User {
     public static User getLoggedInUser() {
         return loggedInUser;
     }
+    public void removePeriod(Period period){
+        this.periods.remove(period);
+    }
 
     public static void setLoggedInUser(User loggedInUser) {
         User.loggedInUser = loggedInUser;

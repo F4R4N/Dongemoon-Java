@@ -8,7 +8,8 @@ public class Purchase {
     private Date dateAndTime;
     private ArrayList<PersonCoefficient> purchaseUsers;
 
-    public Purchase(String title, int expense, Person buyer, ArrayList<PersonCoefficient> purchaseUsers, Date dateAndTime) {
+    public Purchase(String title, int expense, Person buyer, ArrayList<PersonCoefficient> purchaseUsers,
+            Date dateAndTime) {
         this.title = title;
         this.expense = expense;
         this.buyer = buyer;
@@ -35,9 +36,11 @@ public class Purchase {
     public ArrayList<PersonCoefficient> getPurchaseUsers() {
         return purchaseUsers;
     }
-public void setDateAndTime(Date dateAndTime) {
-    this.dateAndTime = dateAndTime;
-}
+
+    public void setDateAndTime(Date dateAndTime) {
+        this.dateAndTime = dateAndTime;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -54,6 +57,13 @@ public void setDateAndTime(Date dateAndTime) {
         this.purchaseUsers = purchaseUsers;
     }
 
+    public void addToPurchaseUsers(PersonCoefficient personCoefficient){
+        this.purchaseUsers.add(personCoefficient);
+    }
+    public void removeFromPurchaseUsers(PersonCoefficient personCoefficient){
+        this.purchaseUsers.remove(personCoefficient);
+    }
+
     public static void printListOfPurchases(ArrayList<Purchase> purchases) {
         if (purchases.size() == 0) {
             System.out.println("No purchases exists yet.");
@@ -65,14 +75,14 @@ public void setDateAndTime(Date dateAndTime) {
                             .replace("0", "-"));
             for (int index = 0; index < purchases.size(); index++) {
                 Purchase purchase = purchases.get(index);
-                System.out.printf(format, (index + 1), purchase.getTitle(), purchase.getDateAndTime(), purchase.getExpense(), purchase.getBuyer().getName());
+                System.out.printf(format, (index + 1), purchase.getTitle(), purchase.getDateAndTime(),
+                        purchase.getExpense(), purchase.getBuyer().getName());
                 PersonCoefficient.printPersonCoefficients(purchase.getPurchaseUsers());
             }
 
         }
     }
 
-    
     public static boolean isInvalidIndex(ArrayList<Purchase> purchases, int purchaseIndexInput) {
         return purchaseIndexInput > purchases.size() - 1 || purchaseIndexInput < 0;
     }
