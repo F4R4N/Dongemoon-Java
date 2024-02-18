@@ -36,4 +36,17 @@ public class PersonCoefficient {
             }
         }
     }
+
+    public static boolean doesPersonExistInPurchaseUsers(Purchase purchase, Person person){
+        for (int i = 0; i < purchase.getPurchaseUsers().size(); i++) {
+            if (purchase.getPurchaseUsers().get(i).getPerson() == person) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isInvalidIndex(ArrayList<PersonCoefficient> personCoefficients, int personCoefficientIndexInput) {
+        return personCoefficientIndexInput > personCoefficients.size() - 1 || personCoefficientIndexInput < 0;
+    }
 }
