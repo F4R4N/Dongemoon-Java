@@ -123,7 +123,7 @@ public class UI {
                 startUserMainMenuSection();
                 break;
             case 3:
-                startPeriodDetailMenu();
+                startPeriodDetailMenu(); //TODO: ADD DETAILS
                 startUserMainMenuSection();
                 break;
             case 4:
@@ -225,7 +225,7 @@ public class UI {
                 startPurchaseSortAndFilterMenu(period);
                 break;
             case 3:
-
+                // TODO: ADD SORTS
                 break;
             case 4:
 
@@ -252,10 +252,11 @@ public class UI {
     }
 
     public static void printPurchasesFilteredByPurchaseUsers(Period period) {
-        Person purchaseUser = getUserPersonChoice("Based on which person do you want to filter purchase Users results?", period.getPersons());
+        Person purchaseUser = getUserPersonChoice("Based on which person do you want to filter purchase Users results?",
+                period.getPersons());
         if (purchaseUser == null) {
             startPurchaseSortAndFilterMenu(period);
-        }else{
+        } else {
             ArrayList<Purchase> filteredPurchases = Purchase.getPurchaseUsersFilteredPurchases(period, purchaseUser);
             Purchase.printListOfPurchases(filteredPurchases);
         }
