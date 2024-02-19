@@ -123,7 +123,7 @@ public class UI {
                 startUserMainMenuSection();
                 break;
             case 3:
-                startPeriodDetailMenu(); //TODO: ADD DETAILS
+                startPeriodDetailMenu(); // TODO: ADD DETAILS
                 startUserMainMenuSection();
                 break;
             case 4:
@@ -225,10 +225,12 @@ public class UI {
                 startPurchaseSortAndFilterMenu(period);
                 break;
             case 3:
-                // TODO: ADD SORTS
+                printDateAndTimeSortedPurchases(period);
+                startPurchaseSortAndFilterMenu(period);
                 break;
             case 4:
-
+                printExpenseSortedPurchases(period);
+                startPurchaseSortAndFilterMenu(period);
                 break;
             case 5:
                 startUserMainMenuSection();
@@ -260,6 +262,16 @@ public class UI {
             ArrayList<Purchase> filteredPurchases = Purchase.getPurchaseUsersFilteredPurchases(period, purchaseUser);
             Purchase.printListOfPurchases(filteredPurchases);
         }
+    }
+
+    public static void printExpenseSortedPurchases(Period period) {
+        ArrayList<Purchase> purchases = period.getExpenseSortedPurchases();
+        Purchase.printListOfPurchases(purchases);
+    }
+
+    public static void printDateAndTimeSortedPurchases(Period period) {
+        ArrayList<Purchase> purchases = period.getDateAndTimeSortedPurchases();
+        Purchase.printListOfPurchases(purchases);
     }
 
     public static void startEditPeriodMenu() {

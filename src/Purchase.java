@@ -124,4 +124,12 @@ public class Purchase {
         }
         return filteredPurchases;
     }
+
+    public static ArrayList<Purchase> clonePurchases(ArrayList<Purchase> purchases){
+        ArrayList<Purchase> clonedPurchases = new ArrayList<Purchase>();
+        for (int index = 0; index < purchases.size(); index++) {
+            clonedPurchases.add(new Purchase(purchases.get(index).getTitle(), purchases.get(index).getExpense(), purchases.get(index).getBuyer(), purchases.get(index).getPurchaseUsers(), purchases.get(index).getDateAndTime()));
+        }
+        return clonedPurchases;
+    }
 }

@@ -138,7 +138,8 @@ public class Period {
 
     public static void printPersonsDirectExpenses(Period period, HashMap<Person, Integer> personDirectExpenses) {
         System.out
-                .println("Persons Direct expenses in '" + period.getName() + "'s' period:\n-------------------------------------------------");
+                .println("Persons Direct expenses in '" + period.getName()
+                        + "'s' period:\n-------------------------------------------------");
         if (personDirectExpenses.isEmpty()) {
             System.out.println("No person or purchases Exist yet.");
         }
@@ -163,18 +164,52 @@ public class Period {
         return false;
     }
 
-    public static boolean isPersonInvolvedInPurchases(Period period, Person person){
+    public static boolean isPersonInvolvedInPurchases(Period period, Person person) {
         boolean isInvolved = false;
         for (int i = 0; i < period.getPurchases().size(); i++) {
             if (period.getPurchases().get(i).getBuyer() == person) {
                 isInvolved = true;
             }
             for (int j = 0; j < period.getPurchases().get(i).getPurchaseUsers().size(); j++) {
-                if (period.getPurchases().get(i).getPurchaseUsers().get(j).getPerson()==person) {
-                    isInvolved=true;
+                if (period.getPurchases().get(i).getPurchaseUsers().get(j).getPerson() == person) {
+                    isInvolved = true;
                 }
             }
         }
         return isInvolved;
+    }
+
+    public ArrayList<Purchase> getExpenseSortedPurchases() {
+        ArrayList<Purchase> clonedPurchases = Purchase.clonePurchases(this.getPurchases());
+        for (int i = 0; i < clonedPurchases.size(); i++) {
+            int purchaseWithMinExpenseIndex = i;
+            for (int j = i; j < clonedPurchases.size(); j++) {
+                if (clonedPurchases.get(j).getExpense() < clonedPurchases.get(purchaseWithMinExpenseIndex)
+                        .getExpense()) {
+                    purchaseWithMinExpenseIndex = j;
+                }
+            }
+            Purchase tempPurchase = clonedPurchases.get(i);
+            clonedPurchases.set(i, clonedPurchases.get(purchaseWithMinExpenseIndex));
+            clonedPurchases.set(purchaseWithMinExpenseIndex, tempPurchase);
+        }
+        return clonedPurchases;
+    }
+
+    public ArrayList<Purchase> getDateAndTimeSortedPurchases() {
+        ArrayList<Purchase> clonedPurchases = Purchase.clonePurchases(this.getPurchases());
+        for (int i = 0; i < clonedPurchases.size(); i++) {
+            int purchaseWithMinDateAndTimeIndex = i;
+            for (int j = i; j < clonedPurchases.size(); j++) {
+                if (clonedPurchases.get(j).getDateAndTime()
+                        .compareTo(clonedPurchases.get(purchaseWithMinDateAndTimeIndex).getDateAndTime()) < 0) {
+                            purchaseWithMinDateAndTimeIndex = j;
+                }
+            }
+            Purchase tempPurchase = clonedPurchases.get(i);
+            clonedPurchases.set(i, clonedPurchases.get(purchaseWithMinDateAndTimeIndex));
+            clonedPurchases.set(purchaseWithMinDateAndTimeIndex, tempPurchase);
+        }
+        return clonedPurchases;
     }
 }
