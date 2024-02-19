@@ -118,7 +118,7 @@ public class Period {
         Purchase.printListOfPurchases(period.getPurchases());
     }
 
-    public ArrayList<Person> getPersonsInvolvedInPurchases(){
+    public ArrayList<Person> getPersonsInvolvedInPurchases() {
         ArrayList<Person> personInvolvedInPurchases = new ArrayList<Person>();
         for (int index = 0; index < this.getPersons().size(); index++) {
             if (isPersonInvolvedInPurchases(this, this.getPersons().get(index))) {
@@ -219,7 +219,7 @@ public class Period {
             for (int j = i; j < clonedPurchases.size(); j++) {
                 if (clonedPurchases.get(j).getDateAndTime()
                         .compareTo(clonedPurchases.get(purchaseWithMinDateAndTimeIndex).getDateAndTime()) < 0) {
-                            purchaseWithMinDateAndTimeIndex = j;
+                    purchaseWithMinDateAndTimeIndex = j;
                 }
             }
             Purchase tempPurchase = clonedPurchases.get(i);
@@ -227,5 +227,28 @@ public class Period {
             clonedPurchases.set(purchaseWithMinDateAndTimeIndex, tempPurchase);
         }
         return clonedPurchases;
+    }
+
+    public HashMap<Person, HashMap<Person, Integer>> calculatePurchasesPersonsDebts() {
+        HashMap<Person, HashMap<Person, Integer>> debtorsData = new HashMap<Person, HashMap<Person, Integer>>();
+        for (int index = 0; index < this.getPurchases().size(); index++) {
+            Purchase purchase = this.getPurchases().get(index);
+            for (int i = 0; i < purchase.getPurchaseUsers().size(); i++) {
+                PersonCoefficient purchaseUser = purchase.getPurchaseUsers().get(i);
+                HashMap<Person, Integer> creditor = new HashMap<Person, Integer>();
+                int purchaseUserShare = purchase.calculatePurchaseUserShare(purchaseUser);
+                creditor.put(purchase.getBuyer(), purchaseUserShare);
+                if (debtorsData.containsKey(purchaseUser.getPerson())) {
+                    Integer debtSum = debtorsData.get(purchase.getBuyer()).getOrDefault(purchase.getBuyer(), 0)
+                            + purchaseUserShare;
+                    debtorsData.get(purchaseUser.getPerson()).put(purchase.getBuyer(), debtSum);
+                } else {
+                    if (purchaseUser.getPerson() != purchase.getBuyer()) {
+                        debtorsData.put(purchaseUser.getPerson(), creditor);
+                    }
+                }
+            }
+        }
+        return debtorsData;
     }
 }
