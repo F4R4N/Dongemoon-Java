@@ -77,12 +77,11 @@ public class Purchase {
             for (int index = 0; index < purchases.size(); index++) {
                 Purchase purchase = purchases.get(index);
                 System.out.printf(format, (index + 1), purchase.getTitle(), purchase.getDateAndTime(),
-                        purchase.getExpense(), purchase.getBuyer().getName());
-                UI.printTitle("Purchase Users");
+                purchase.getExpense(), purchase.getBuyer().getName());
+                System.out.println("Purchase Users: ");
                 PersonCoefficient.printPersonCoefficients(purchase.getPurchaseUsers());
-                System.out.println();
+                System.out.print(String.format("|%013d%031d%036d%016d%020d|%n", 0, 0, 0, 0, 0).replace("0", "-"));
             }
-
         }
     }
 
