@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class UI {
@@ -58,7 +59,6 @@ public class UI {
             if (user != null) {
                 User.setLoggedInUser(user);
                 startUserMainMenuSection();
-
             } else {
                 System.out.println("An error occurred in the process of logging yo in please try again.");
                 initialize();
@@ -101,7 +101,6 @@ public class UI {
         System.out.print(String.format("%n%08d%0" + message.length() + "d%08d", 0, 0, 0).replace("0", "-"));
         System.out.print("\n\t" + message + "\n");
         System.out.print(String.format("%08d%0" + message.length() + "d%08d%n", 0, 0, 0).replace("0", "-"));
-
     }
 
     private static void printUserMainMenu() {
@@ -135,7 +134,17 @@ public class UI {
                 startUserMainMenuSection();
                 break;
             case 6:
+                HashMap<Person, HashMap<Person, Integer>> debts = User.getLoggedInUser().getPeriods().get(0).calculatePurchasesPersonsDebts();
+                for (Person name: debts.keySet()) {
+                    String key = name.getName().toString();
+                    System.out.println(key);
+                    for (Person iterable_element : debts.get(name).keySet()) {
+                        String innerKey = iterable_element.getName();
+                        Integer value = debts.get(name).get(iterable_element);
+                        System.out.println(innerKey +" "+value);
 
+                    }
+                }
                 break;
             case 7:
 
@@ -336,7 +345,6 @@ public class UI {
         }
         period.setName(newPeriodName);
         printSuccessfullyEditedMessage("Period name");
-
     }
 
     public static void showEditStartDateMenu(Period period) {

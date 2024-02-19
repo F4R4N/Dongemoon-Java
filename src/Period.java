@@ -251,4 +251,72 @@ public class Period {
         }
         return debtorsData;
     }
+
+    public static ArrayList<Integer> calculatePersonsNetPayment(HashMap<Person, HashMap<Person, Integer>> data){
+        ArrayList<Integer> personsNetPayment = new ArrayList<Integer>(); // should change to hashmap person as key net as value
+        for (Map.Entry<Person, HashMap<Person, Integer>> debtorEntry : data.entrySet()) {
+            Person debtor = debtorEntry.getKey();
+            int amountToGet = 0;
+            for (Map.Entry<Person, HashMap<Person, Integer>> creditorEntry : data.entrySet()) {
+                if (creditorEntry.getValue().containsKey(debtor)) {
+                    int netPayment = creditorEntry.getValue().get(debtor) - ; // * use it here
+                    personsNetPayment.add()
+                    // add net payment and person to persons net payment in which 
+                } // * should write a function that iterate through hashmap and calculae all of the debts of one person.
+            }
+        }
+    }
+
+
+
+    static final int N = 3;
+
+    static int getMin(int arr[]) {
+        int minInd = 0;
+        for (int i = 1; i < N; i++)
+            if (arr[i] < arr[minInd])
+                minInd = i;
+        return minInd;
+    }
+
+    static int getMax(int arr[]) {
+        int maxInd = 0;
+        for (int i = 1; i < N; i++)
+            if (arr[i] > arr[maxInd])
+                maxInd = i;
+        return maxInd;
+    }
+
+    static int minOf2(int x, int y) {
+        return (x < y) ? x : y;
+    }
+
+    static void minCashFlowRec(int amount[]) { // get person with their net amounts
+        int mxCredit = getMax(amount); // get index of person with the most net worth
+        int mxDebit = getMin(amount); // get index of person with least net worth
+        if (amount[mxCredit] == 0 && amount[mxDebit] == 0)
+            return;
+        int min = minOf2(-amount[mxDebit], amount[mxCredit]); // min of 2 amounts
+        amount[mxCredit] -= min; // subtract person with most money from min of 2 amounts
+        amount[mxDebit] += min; // add person with least money to min of 2 amounts
+        System.out.println("Person " + mxDebit + " pays " + min
+                + " to " + "Person " + mxCredit);
+        minCashFlowRec(amount);
+    }
+
+    static void minCashFlow(int graph[][]) {
+        int amount[] = new int[N];
+        for (int p = 0; p < N; p++)
+            for (int i = 0; i < N; i++)
+                amount[p] += (graph[i][p] - graph[p][i]); // 0 : -3000 1 : 
+                // add a loop in which for each person find the net price. subtract amount person should get by amount he should give. in the end we have person with their net amounts only.
+        minCashFlowRec(amount);
+    }
+
+    public static void main(String[] args) {
+        int graph[][] = { { 0, 1000, 2000 }, // person 0 pays person 0: 0 - person 0 pays person 1: 1000 - person 0 pays person 2 : 2000
+                          { 0, 0   , 5000 },
+                          { 0, 0   , 0    }, };
+        minCashFlow(graph);
+    }
 }
