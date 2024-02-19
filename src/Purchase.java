@@ -131,4 +131,13 @@ public class Purchase {
         }
         return clonedPurchases;
     }
+
+    public int calculatePurchaseUserShare(PersonCoefficient purchaseUser){
+        int coefficientSum = 0;
+        for (int index = 0; index < this.purchaseUsers.size(); index++) {
+            coefficientSum += this.purchaseUsers.get(index).getCoefficient();
+        }
+        int eachCoefficientExpense = this.getExpense() / coefficientSum;
+        return purchaseUser.getCoefficient() * eachCoefficientExpense;
+    }
 }
