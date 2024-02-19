@@ -207,7 +207,7 @@ public class UI {
             startUserMainMenuSection();
         } else {
             Period.printPeriodDetail(period);
-            if (period.getPurchases().size()!=0) {
+            if (period.getPurchases().size() != 0) {
                 startPurchaseSortAndFilterMenu(period);
             }
         }
@@ -354,14 +354,16 @@ public class UI {
     public static void showRemovePurchaseMenu(Period period) {
         printTitle("Delete Purchase");
         System.out.println("List of all purchases in " + period.getName() + " period:");
-        Purchase.printListOfPurchases(period.getPurchases());
-        int userDeletionChoice = getUserIntInput("Enter the number associated with purchase to delete it: ") - 1;
-        if (Purchase.isInvalidIndex(period.getPurchases(), userDeletionChoice)) {
-            printInvalidChoice();
-            showRemovePurchaseMenu(period);
-        } else {
-            period.getPurchases().remove(period.getPurchases().get(userDeletionChoice));
-            System.out.println("chose purchase was deleted successfully!");
+        if (period.getPurchases().size() != 0) {
+            Purchase.printListOfPurchases(period.getPurchases());
+            int userDeletionChoice = getUserIntInput("Enter the number associated with purchase to delete it: ") - 1;
+            if (Purchase.isInvalidIndex(period.getPurchases(), userDeletionChoice)) {
+                printInvalidChoice();
+                showRemovePurchaseMenu(period);
+            } else {
+                period.getPurchases().remove(period.getPurchases().get(userDeletionChoice));
+                System.out.println("chose purchase was deleted successfully!");
+            }
         }
     }
 
@@ -391,14 +393,16 @@ public class UI {
     public static void startChoosePurchaseSection(Period period) {
         printTitle("Edit Purchase");
         System.out.println("List of all purchases in " + period.getName() + " period:");
-        Purchase.printListOfPurchases(period.getPurchases());
-        int userEditPurchaseChoice = getUserIntInput("Enter the number associated with purchase to edit it: ") - 1;
-        if (Purchase.isInvalidIndex(period.getPurchases(), userEditPurchaseChoice)) {
-            printInvalidChoice();
-            startChoosePurchaseSection(period);
-        } else {
-            Purchase purchase = period.getPurchases().get(userEditPurchaseChoice);
-            startEditPurchaseMenuSection(period, purchase);
+        if (period.getPurchases().size()!=0) {
+            Purchase.printListOfPurchases(period.getPurchases());
+            int userEditPurchaseChoice = getUserIntInput("Enter the number associated with purchase to edit it: ") - 1;
+            if (Purchase.isInvalidIndex(period.getPurchases(), userEditPurchaseChoice)) {
+                printInvalidChoice();
+                startChoosePurchaseSection(period);
+            } else {
+                Purchase purchase = period.getPurchases().get(userEditPurchaseChoice);
+                startEditPurchaseMenuSection(period, purchase);
+            }
         }
     }
 
@@ -560,6 +564,7 @@ public class UI {
         } else {
             Person person = new Person(userPersonNameInput);
             period.addPerson(person);
+            printSuccessfullyCreatedMessage("Person");
         }
     }
 
