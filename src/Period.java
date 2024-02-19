@@ -108,7 +108,7 @@ public class Period {
     public static void printPeriodDetail(Period period) {
         UI.printTitle("'" + period.getName() + "'s' period detail");
         System.out.println("Start date and time: " + dateAndTimeParser.format(period.getStartDate()));
-        System.out.println("Number of persons involved in this period: " + period.persons.size());
+        System.out.println("Number of persons in this period: " + period.persons.size());
         System.out.println("Total Expenses: " + period.getTotalExpenses());
         System.out.println("Number of purchases in period: " + period.getPurchases().size());
         System.out.println("Each persons average expense: " + period.getOverallPersonAverageExpense());
@@ -116,14 +116,23 @@ public class Period {
         printPersonsDirectExpenses(period, personDirectExpenses);
         UI.printTitle("List Of Purchases");
         Purchase.printListOfPurchases(period.getPurchases());
+    }
 
+    public ArrayList<Person> getPersonsInvolvedInPurchases(){
+        ArrayList<Person> personInvolvedInPurchases = new ArrayList<Person>();
+        for (int index = 0; index < this.getPersons().size(); index++) {
+            if (isPersonInvolvedInPurchases(this, this.getPersons().get(index))) {
+                personInvolvedInPurchases.add(this.getPersons().get(index));
+            }
+        }
+        return personInvolvedInPurchases;
     }
 
     public double getOverallPersonAverageExpense() {
         if (this.getPurchases().size() == 0) {
             return 0;
         } else {
-            return this.getTotalExpenses() / this.getPurchases().size();
+            return this.getTotalExpenses() / this.getPersonsInvolvedInPurchases().size();
         }
     }
 
@@ -134,6 +143,11 @@ public class Period {
             Integer personExpenseSum = personsDirectExpenses.getOrDefault(purchase.getBuyer(), 0)
                     + purchase.getExpense();
             personsDirectExpenses.put(purchase.getBuyer(), personExpenseSum);
+            for (int i = 0; i < purchase.getPurchaseUsers().size(); i++) {
+                PersonCoefficient purchaseUser = purchase.getPurchaseUsers().get(i);
+                Integer purchaseUserExpenseSum = personsDirectExpenses.getOrDefault(purchaseUser.getPerson(), 0);
+                personsDirectExpenses.put(purchaseUser.getPerson(), purchaseUserExpenseSum);
+            }
         }
         return personsDirectExpenses;
     }
