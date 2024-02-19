@@ -114,6 +114,8 @@ public class Period {
         System.out.println("Each persons average expense: " + period.getOverallPersonAverageExpense());
         HashMap<Person, Integer> personDirectExpenses = period.getPersonsDirectExpenses();
         printPersonsDirectExpenses(period, personDirectExpenses);
+        UI.printTitle("List Of Purchases");
+        Purchase.printListOfPurchases(period.getPurchases());
 
     }
 

@@ -189,7 +189,6 @@ public class UI {
         System.out.println(title);
         Period.printListOfPeriods(periods);
         if (periods.size() == 0) {
-            System.out.println("No period exist yet. try creating a period first.");
             return null;
         }
         int periodIndexInput = getUserIntInput("Enter Period number: ") - 1;
@@ -208,13 +207,15 @@ public class UI {
             startUserMainMenuSection();
         } else {
             Period.printPeriodDetail(period);
-            startPurchaseSortAndFilterMenu(period);
+            if (period.getPurchases().size()!=0) {
+                startPurchaseSortAndFilterMenu(period);
+            }
         }
     }
 
     public static void startPurchaseSortAndFilterMenu(Period period) {
         int userActionChoice = getUserIntInput(
-                "\n1- Filter by buyer\n2- Filter by purchase user\n3- Sort by date and time\n4- Sort by expense\n5- Back\n: ");
+                "\nApply sort and filter on purchases\n1- Filter by buyer\n2- Filter by purchase user\n3- Sort by date and time\n4- Sort by expense\n5- Back\n: ");
         switch (userActionChoice) {
             case 1:
                 printPurchasesFilteredByBuyer(period);
