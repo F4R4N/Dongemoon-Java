@@ -298,9 +298,13 @@ public class Period {
         int min = Utils.minOfTwoIntegers(-personNetPayment.get(maxDebit), personNetPayment.get(maxCredit));
         personNetPayment.put(maxCredit, personNetPayment.get(maxCredit) - min);
         personNetPayment.put(maxDebit, personNetPayment.get(maxDebit) + min);
-        HashMap<Person, Integer> creditorMap = new HashMap<Person, Integer>();
-        creditorMap.put(maxCredit, min);
-        this.payments.put(maxDebit, creditorMap);
+        if (this.payments.containsKey(maxDebit)) {
+            this.payments.get(maxDebit).put(maxCredit, min);
+        }else{
+            HashMap<Person, Integer> creditorMap = new HashMap<Person, Integer>();
+            creditorMap.put(maxCredit, min);
+            this.payments.put(maxDebit, creditorMap);
+        }
         calculatePersonCreditsAndDebits(personNetPayment);
     }
 
