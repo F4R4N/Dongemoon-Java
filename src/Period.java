@@ -241,7 +241,7 @@ public class Period {
                 int purchaseUserShare = purchase.calculatePurchaseUserShare(purchaseUser);
                 creditor.put(purchase.getBuyer(), purchaseUserShare);
                 if (debtorsData.containsKey(purchaseUser.getPerson())) {
-                    Integer debtSum = debtorsData.get(purchase.getBuyer()).getOrDefault(purchase.getBuyer(), 0)
+                    Integer debtSum = debtorsData.get(purchaseUser.getPerson()).getOrDefault(purchase.getBuyer(), 0)
                             + purchaseUserShare;
                     debtorsData.get(purchaseUser.getPerson()).put(purchase.getBuyer(), debtSum);
                 } else {
