@@ -97,9 +97,11 @@ public class UI {
     }
 
     public static void printTitle(String message) {
-        System.out.print(String.format("%n%08d%0" + message.length() + "d%08d", 0, 0, 0).replace("0", "-"));
-        System.out.print("\n\t" + message + "\n");
-        System.out.print(String.format("%08d%0" + message.length() + "d%08d%n", 0, 0, 0).replace("0", "-"));
+        int terminalSize = 209;
+        int eachSideSize = (terminalSize/2)+message.length()/2;
+        System.out.print(String.format("%n%0209d%n", 0).replace("0", "-"));
+        System.out.print(String.format("%"+eachSideSize+"s", message));
+        System.out.print(String.format("%n%0209d", 0).replace("0", "-"));
     }
 
     private static void printUserMainMenu() {
@@ -536,7 +538,7 @@ public class UI {
     public static void printRemovePurchaseUserSection(Period period, Purchase purchase) {
         printTitle("Remove Purchase Users");
         ArrayList<PersonCoefficient> purchaseUsers = purchase.getPurchaseUsers();
-        System.out.println(PersonCoefficient.printPersonCoefficients(purchaseUsers));
+        PersonCoefficient.printPersonCoefficients(purchaseUsers);
         int userDeleteChoice = getUserIntInput("Which purchase user do you want to remove (enter the number)? ") - 1;
         if (PersonCoefficient.isInvalidIndex(purchaseUsers, userDeleteChoice)) {
             printInvalidChoice();
