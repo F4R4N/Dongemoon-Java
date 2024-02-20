@@ -44,6 +44,10 @@ public class Database {
             System.out.println("Data file Not found");
         }catch (IOException e){
             System.out.println("An error occurred while trying to read data from file.");
+        }catch (ClassNotFoundException e){
+            System.out.println("Something went wrong");
+        }catch (ClassCastException e){
+            System.out.println("Something went wrong");
         }
     }
 
