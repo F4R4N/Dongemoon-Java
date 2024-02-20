@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class UI {
@@ -74,7 +73,7 @@ public class UI {
     }
 
     private static void printLoginOrRegisterMenu() {
-        printTitle("Welcome");
+        printTitle("Welcome to DONGEMOON");
         System.out.print("\n1- Register\n2- Login\n3- Exit\n");
     }
 
@@ -134,17 +133,7 @@ public class UI {
                 startUserMainMenuSection();
                 break;
             case 6:
-                HashMap<Person, HashMap<Person, Integer>> debts = User.getLoggedInUser().getPeriods().get(0).calculatePurchasesPersonsDebts();
-                for (Person name: debts.keySet()) {
-                    String key = name.getName().toString();
-                    System.out.println(key);
-                    for (Person iterable_element : debts.get(name).keySet()) {
-                        String innerKey = iterable_element.getName();
-                        Integer value = debts.get(name).get(iterable_element);
-                        System.out.println(innerKey +" "+value);
 
-                    }
-                }
                 break;
             case 7:
 

@@ -11,7 +11,7 @@ public class Period {
     private ArrayList<Person> persons;
     private ArrayList<Purchase> purchases;
     private static SimpleDateFormat dateAndTimeParser = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
+    private HashMap<Person, HashMap<Person, Integer>> payments = new HashMap<Person, HashMap<Person, Integer>>();
     public Period(String name, Date startDate) {
         this.name = name;
         this.startDate = startDate;
@@ -116,6 +116,7 @@ public class Period {
         printPersonsDirectExpenses(period, personDirectExpenses);
         UI.printTitle("List Of Purchases");
         Purchase.printListOfPurchases(period.getPurchases());
+        period.printPeriodDebtsAndCredits();
     }
 
     public ArrayList<Person> getPersonsInvolvedInPurchases() {
@@ -229,7 +230,7 @@ public class Period {
         return clonedPurchases;
     }
 
-    public HashMap<Person, HashMap<Person, Integer>> calculatePurchasesPersonsDebts() {
+    public HashMap<Person, HashMap<Person, Integer>> normalizeDataForGraph() {
         HashMap<Person, HashMap<Person, Integer>> debtorsData = new HashMap<Person, HashMap<Person, Integer>>();
         for (int index = 0; index < this.getPurchases().size(); index++) {
             Purchase purchase = this.getPurchases().get(index);
@@ -252,71 +253,70 @@ public class Period {
         return debtorsData;
     }
 
-    public static ArrayList<Integer> calculatePersonsNetPayment(HashMap<Person, HashMap<Person, Integer>> data){
-        ArrayList<Integer> personsNetPayment = new ArrayList<Integer>(); // should change to hashmap person as key net as value
+    public static int calculateDebts(HashMap<Person, Integer> debtorsDebts) {
+        int debt = 0;
+        for (Map.Entry<Person, Integer> entry : debtorsDebts.entrySet()) {
+            debt += entry.getValue();
+        }
+        return debt;
+    }
+
+    public static int calculateCredits(HashMap<Person, HashMap<Person, Integer>> data, Person creditor) {
+        int credit = 0;
+        for (Map.Entry<Person, HashMap<Person, Integer>> entry : data.entrySet()) {
+            for (Map.Entry<Person, Integer> entry2 : entry.getValue().entrySet()) {
+                if (entry2.getKey() == creditor) {
+                    credit += entry2.getValue();
+                }
+            }
+        }
+        return credit;
+    }
+
+    public static HashMap<Person, Integer> calculatePersonsNetPayment(HashMap<Person, HashMap<Person, Integer>> data) {
+        HashMap<Person, Integer> personsNetPayment = new HashMap<Person, Integer>();
         for (Map.Entry<Person, HashMap<Person, Integer>> debtorEntry : data.entrySet()) {
             Person debtor = debtorEntry.getKey();
-            int amountToGet = 0;
-            for (Map.Entry<Person, HashMap<Person, Integer>> creditorEntry : data.entrySet()) {
-                if (creditorEntry.getValue().containsKey(debtor)) {
-                    int netPayment = creditorEntry.getValue().get(debtor) - ; // * use it here
-                    personsNetPayment.add()
-                    // add net payment and person to persons net payment in which 
-                } // * should write a function that iterate through hashmap and calculae all of the debts of one person.
+            int netPayment = calculateCredits(data, debtor) - calculateDebts(data.get(debtor));
+            personsNetPayment.put(debtor, netPayment);
+        }
+        return personsNetPayment;
+    }
+
+    public static void calculatePersonCreditsAndDebits(HashMap<Person, Integer> personNetPayment) {
+        Person maxCredit = Utils.getPersonWithMaxNet(personNetPayment);
+        Person maxDebit = Utils.getPersonWithMinNet(personNetPayment);
+        if (personNetPayment.get(maxCredit) == 0 && personNetPayment.get(maxDebit) == 0) {
+            return;
+        }
+        int min = Utils.minOfTwoIntegers(-personNetPayment.get(maxDebit), personNetPayment.get(maxCredit));
+        personNetPayment.put(maxCredit, personNetPayment.get(maxCredit) - min);
+        personNetPayment.put(maxDebit, personNetPayment.get(maxDebit) + min);
+        HashMap<Person, Integer> creditorMap = new HashMap<Person, Integer>();
+        creditorMap.put(maxCredit, min);
+        payments.put(maxDebit, creditorMap);
+        calculatePersonCreditsAndDebits(personNetPayment);
+    }
+
+    public void printPeriodDebtsAndCredits(){
+        HashMap<Person, HashMap<Person, Integer>> normalizedData = this.normalizeDataForGraph();
+        HashMap<Person, Integer> personsNetPayments = calculatePersonsNetPayment(normalizedData);
+        calculatePersonCreditsAndDebits(personsNetPayments);
+        if (payments.size()==0) {
+            System.out.println("No period detail exist yet.");
+        } else {
+            String format = "|%-10s  |%-35s|%-12s|%-10s|%-35s|%n";
+            System.out.printf(format, "NO.", "Person", "Action", "Amount", "Person");
+            System.out
+                    .print(String.format("|%012d|%035d|%012d|%010|%035|%n", 0, 0, 0,0,0)
+                            .replace("0", "-"));
+            int index = 0;
+            for (Map.Entry<Person,HashMap<Person, Integer>> entry: this.payments.entrySet()) {
+                Person creditor = entry.getKey()
+                Integer amount = 
+                System.out.printf(format, (index + 1), entry.getKey(), "Should Pay",);
             }
         }
     }
 
-
-
-    static final int N = 3;
-
-    static int getMin(int arr[]) {
-        int minInd = 0;
-        for (int i = 1; i < N; i++)
-            if (arr[i] < arr[minInd])
-                minInd = i;
-        return minInd;
-    }
-
-    static int getMax(int arr[]) {
-        int maxInd = 0;
-        for (int i = 1; i < N; i++)
-            if (arr[i] > arr[maxInd])
-                maxInd = i;
-        return maxInd;
-    }
-
-    static int minOf2(int x, int y) {
-        return (x < y) ? x : y;
-    }
-
-    static void minCashFlowRec(int amount[]) { // get person with their net amounts
-        int mxCredit = getMax(amount); // get index of person with the most net worth
-        int mxDebit = getMin(amount); // get index of person with least net worth
-        if (amount[mxCredit] == 0 && amount[mxDebit] == 0)
-            return;
-        int min = minOf2(-amount[mxDebit], amount[mxCredit]); // min of 2 amounts
-        amount[mxCredit] -= min; // subtract person with most money from min of 2 amounts
-        amount[mxDebit] += min; // add person with least money to min of 2 amounts
-        System.out.println("Person " + mxDebit + " pays " + min
-                + " to " + "Person " + mxCredit);
-        minCashFlowRec(amount);
-    }
-
-    static void minCashFlow(int graph[][]) {
-        int amount[] = new int[N];
-        for (int p = 0; p < N; p++)
-            for (int i = 0; i < N; i++)
-                amount[p] += (graph[i][p] - graph[p][i]); // 0 : -3000 1 : 
-                // add a loop in which for each person find the net price. subtract amount person should get by amount he should give. in the end we have person with their net amounts only.
-        minCashFlowRec(amount);
-    }
-
-    public static void main(String[] args) {
-        int graph[][] = { { 0, 1000, 2000 }, // person 0 pays person 0: 0 - person 0 pays person 1: 1000 - person 0 pays person 2 : 2000
-                          { 0, 0   , 5000 },
-                          { 0, 0   , 0    }, };
-        minCashFlow(graph);
-    }
 }
