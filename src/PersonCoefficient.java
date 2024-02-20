@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class PersonCoefficient {
+public class PersonCoefficient implements Serializable{
     private Person person;
     private int coefficient;
 

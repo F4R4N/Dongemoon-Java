@@ -1,5 +1,6 @@
+import java.io.Serializable;
 import java.util.ArrayList;
-public class Person {
+public class Person implements Serializable{
     private String name;
 
     public Person(String name){
@@ -50,7 +51,7 @@ public class Person {
             System.out.printf(format, "NO.", "Name");
             System.out
                     .print(String.format("|%012d|%030d|%n", 0, 0)
-                            .replace("0", "-"));
+                            .replace("0", "="));
             for (int index = 0; index < persons.size(); index++) {
                 Person person = persons.get(index);
                 System.out.printf(format, (index + 1), person.getName());

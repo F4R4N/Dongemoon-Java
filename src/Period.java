@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -5,7 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Period {
+public class Period implements Serializable{
     private String name;
     private Date startDate;
     private ArrayList<Person> persons;
@@ -70,7 +71,7 @@ public class Period {
             System.out.printf(format, "NO.", "Name", "Start Date");
             System.out
                     .print(String.format("|%012d|%025d|%035d|%n", 0, 0, 0)
-                            .replace("0", "-"));
+                            .replace("0", "="));
             for (int index = 0; index < periods.size(); index++) {
                 Period period = periods.get(index);
                 System.out.printf(format, (index + 1), period.getName(), period.getStartDate());
@@ -86,7 +87,7 @@ public class Period {
             System.out.printf(format, "NO.", "Name", "Start Date");
             System.out
                     .print(String.format("|%012d|%025d|%035d|%n", 0, 0, 0)
-                            .replace("0", "-"));
+                            .replace("0", "="));
             for (int index = 0; index < periods.size(); index++) {
                 Period period = periods.get(index);
                 System.out.printf(format, (index + 1), period.getName(), period.getStartDate());

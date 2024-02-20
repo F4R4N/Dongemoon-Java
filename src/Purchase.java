@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Purchase {
+public class Purchase implements Serializable{
     private String title;
     private int expense;
     private Person buyer;
