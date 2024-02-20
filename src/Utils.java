@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class Utils {
     public static boolean isStringEmptyOrNull(String string) {
@@ -14,22 +15,32 @@ public class Utils {
     }
 
     public static Person getPersonWithMinNet(HashMap<Person, Integer> personsNet) {
-        Person minNetPerson = (Person) personsNet.keySet().toArray()[0];
-        for (Map.Entry<Person, Integer> entry : personsNet.entrySet()) {
-            if (entry.getValue() < personsNet.get(minNetPerson)) {
-                minNetPerson = entry.getKey();
+        Optional<Person> firstPerson = personsNet.keySet().stream().findFirst();
+        if (firstPerson.isPresent()) {
+            Person minNetPerson =firstPerson.get();
+            for (Map.Entry<Person, Integer> entry : personsNet.entrySet()) {
+                if (entry.getValue() < personsNet.get(minNetPerson)) {
+                    minNetPerson = entry.getKey();
+                }
             }
+            return minNetPerson;
+        } else {
+            return null;
         }
-        return minNetPerson;
     }
 
     public static Person getPersonWithMaxNet(HashMap<Person, Integer> personsNet) {
-        Person maxNetPerson = (Person) personsNet.keySet().toArray()[0];
-        for (Map.Entry<Person, Integer> entry : personsNet.entrySet()) {
-            if (entry.getValue() > personsNet.get(maxNetPerson)) {
-                maxNetPerson = entry.getKey();
+        Optional<Person> firstPerson = personsNet.keySet().stream().findFirst();
+        if (firstPerson.isPresent()) {
+            Person maxNetPerson = firstPerson.get();
+            for (Map.Entry<Person, Integer> entry : personsNet.entrySet()) {
+                if (entry.getValue() > personsNet.get(maxNetPerson)) {
+                    maxNetPerson = entry.getKey();
+                }
             }
+            return maxNetPerson;
+        } else {
+            return null;
         }
-        return maxNetPerson;
     }
 }
