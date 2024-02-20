@@ -69,18 +69,16 @@ public class Purchase {
         if (purchases.size() == 0) {
             System.out.println("No purchases exists yet.");
         } else {
-            String format = "|%-10s  |%-30s|%-35s|%-15s|%-20s|%n";
-            System.out.printf(format, "NO.", "Title", "Date and Time", "Expense", "Buyer");
+            String format = "|%-10s  |%-30s|%-35s|%-15s|%-20s|%-57s|%n";
+            System.out.printf(format, "NO.", "Title", "Date and Time", "Expense", "Buyer", "Purchase Users");
             System.out
-                    .print(String.format("|%012d|%030d|%035d|%015d|%020d|%n", 0, 0, 0, 0, 0)
+                    .print(String.format("|%012d|%030d|%035d|%015d|%020d|%057d|%n", 0, 0, 0, 0, 0,0)
                             .replace("0", "-"));
             for (int index = 0; index < purchases.size(); index++) {
                 Purchase purchase = purchases.get(index);
                 System.out.printf(format, (index + 1), purchase.getTitle(), purchase.getDateAndTime(),
-                purchase.getExpense(), purchase.getBuyer().getName());
-                System.out.println("Purchase Users: ");
-                PersonCoefficient.printPersonCoefficients(purchase.getPurchaseUsers());
-                System.out.print(String.format("|%013d%031d%036d%016d%020d|%n", 0, 0, 0, 0, 0).replace("0", "-"));
+                purchase.getExpense(), purchase.getBuyer().getName(), PersonCoefficient.printPersonCoefficients(purchase.getPurchaseUsers()));
+                System.out.print(String.format("|%013d%031d%036d%016d%020d%059d|%n", 0, 0, 0, 0, 0, 0).replace("0", "-"));
             }
         }
     }
