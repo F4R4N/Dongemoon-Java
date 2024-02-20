@@ -5,29 +5,27 @@ import java.util.Scanner;
 public class UI {
     private static Scanner inputReader = new Scanner(System.in);
 
-    public static void initialize() {
-        boolean runProgram = true;
-        while (runProgram) {
-            printLoginOrRegisterMenu();
-            int userActionType = getUserIntInput(": ");
-            switch (userActionType) {
-                case 1:
-                    showRegisterUserMenu();
-                    initialize();
-                    break;
-                case 2:
-                    showLoginUserMenu();
-                    initialize();
-                    break;
-                case 3:
-                    runProgram = false;
-                    break;
-                default:
-                    printInvalidChoice();
-                    initialize();
-                    break;
-            }
+    public static void initializeUI() {
+        printLoginOrRegisterMenu();
+        int userActionType = getUserIntInput(": ");
+        switch (userActionType) {
+            case 1:
+                showRegisterUserMenu();
+                initializeUI();
+                break;
+            case 2:
+                showLoginUserMenu();
+                initializeUI();
+                break;
+            case 3:
+                System.exit(0);
+                break;
+            default:
+                printInvalidChoice();
+                initializeUI();
+                break;
         }
+
     }
 
     private static void showRegisterUserMenu() {
@@ -60,11 +58,11 @@ public class UI {
                 startUserMainMenuSection();
             } else {
                 System.out.println("An error occurred in the process of logging yo in please try again.");
-                initialize();
+                initializeUI();
             }
         } else {
             System.out.println("invalid username or password. Try again");
-            initialize();
+            initializeUI();
         }
     }
 
@@ -98,9 +96,9 @@ public class UI {
 
     public static void printTitle(String message) {
         int terminalSize = 209;
-        int eachSideSize = (terminalSize/2)+message.length()/2;
+        int eachSideSize = (terminalSize / 2) + message.length() / 2;
         System.out.print(String.format("%n%0209d%n", 0).replace("0", "-"));
-        System.out.print(String.format("%"+eachSideSize+"s", message));
+        System.out.print(String.format("%" + eachSideSize + "s", message));
         System.out.print(String.format("%n%0209d", 0).replace("0", "-"));
     }
 
@@ -123,7 +121,7 @@ public class UI {
                 startUserMainMenuSection();
                 break;
             case 3:
-                startPeriodDetailMenu(); // TODO: ADD DETAILS
+                startPeriodDetailMenu();
                 startUserMainMenuSection();
                 break;
             case 4:
@@ -138,7 +136,8 @@ public class UI {
 
                 break;
             case 7:
-
+                Database.writeDataToFile();
+                initializeUI();
                 break;
             default:
                 printInvalidChoice();
@@ -215,7 +214,7 @@ public class UI {
 
     public static void startPurchaseSortAndFilterMenu(Period period) {
         int userActionChoice = getUserIntInput(
-                "\nApply sort and filter on purchases\n1- Filter by buyer\n2- Filter by purchase user\n3- Sort by date and time\n4- Sort by expense\n5- Back\n: ");
+                "Apply sort and filter on purchases\n1- Filter by buyer\n2- Filter by purchase user\n3- Sort by date and time\n4- Sort by expense\n5- Back\n: ");
         switch (userActionChoice) {
             case 1:
                 printPurchasesFilteredByBuyer(period);
@@ -576,7 +575,7 @@ public class UI {
     public static Person getUserPersonChoice(String title, ArrayList<Person> persons) {
         System.out.println(title);
         Person.printPersons(persons);
-        if (persons.size()==0) {
+        if (persons.size() == 0) {
             return null;
         }
         int personIndexInput = getUserIntInput("Enter Person number: ") - 1;
