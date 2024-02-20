@@ -115,9 +115,9 @@ public class Period {
         System.out.println("Each persons average expense: " + period.getOverallPersonAverageExpense());
         HashMap<Person, Integer> personDirectExpenses = period.getPersonsDirectExpenses();
         printPersonsDirectExpenses(period, personDirectExpenses);
+        period.printPeriodDebtsAndCredits();
         UI.printTitle("List Of Purchases");
         Purchase.printListOfPurchases(period.getPurchases());
-        period.printPeriodDebtsAndCredits();
     }
 
     public ArrayList<Person> getPersonsInvolvedInPurchases() {
@@ -156,7 +156,7 @@ public class Period {
 
     public static void printPersonsDirectExpenses(Period period, HashMap<Person, Integer> personDirectExpenses) {
         System.out
-                .println("Persons Direct expenses in '" + period.getName()
+                .println("\nPersons Direct expenses in '" + period.getName()
                         + "'s' period:\n-------------------------------------------------");
         if (personDirectExpenses.isEmpty()) {
             System.out.println("No person or purchases Exist yet.");
@@ -313,16 +313,17 @@ public class Period {
             HashMap<Person, Integer> personsNetPayments = this.calculatePersonsNetPayment(normalizedData);
             calculatePersonCreditsAndDebits(personsNetPayments);
             String format = "|%-10s  |%-35s|%-12s|%-10s|%-35s|%n";
-            System.out.printf(format, "NO.", "Person", "Action", "Amount", "Person");
+            System.out.printf(format, "NO.", "Person", "Action", "Amount", "To");
             System.out
-                    .print(String.format("|%012d|%035d|%012d|%010|%035|%n", 0, 0, 0,0,0)
+                    .print(String.format("|%012d|%035d|%012d|%010d|%035d|%n", 0, 0, 0,0,0)
                             .replace("0", "-"));
             int index = 0;
             for (Map.Entry<Person,HashMap<Person, Integer>> debtorEntry: this.payments.entrySet()) {
                 for (Map.Entry<Person, Integer> creditorEntry : debtorEntry.getValue().entrySet()) {
                     Person creditor = creditorEntry.getKey();
                     Integer amount = creditorEntry.getValue();
-                    System.out.printf(format, (index + 1), debtorEntry.getKey(), "Should Pay", amount, creditor);
+                    System.out.printf(format, (index + 1), debtorEntry.getKey().getName(), "Should Pay", amount, creditor.getName());
+                    index++;
                 }
             }
         }
