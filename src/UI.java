@@ -155,7 +155,7 @@ public class UI {
     public static void printPurchasesInPeriod(Period period) {
         printTitle("Purchases in this period: ");
         if (period.getPurchases() == null) {
-            System.out.println("No purchases");
+            printDontExistMessage("Purchase");
         } else {
             for (int i = 0; i < period.getPurchases().size(); i++) {
                 System.out.print(period.getPurchases().get(i).getTitle() + ", ");
@@ -390,7 +390,7 @@ public class UI {
     public static void startChoosePurchaseSection(Period period) {
         printTitle("Edit Purchase");
         System.out.println("List of all purchases in " + period.getName() + " period:");
-        if (period.getPurchases().size()!=0) {
+        if (period.getPurchases().size() != 0) {
             Purchase.printListOfPurchases(period.getPurchases());
             int userEditPurchaseChoice = getUserIntInput("Enter the number associated with purchase to edit it: ") - 1;
             if (Purchase.isInvalidIndex(period.getPurchases(), userEditPurchaseChoice)) {
@@ -400,7 +400,13 @@ public class UI {
                 Purchase purchase = period.getPurchases().get(userEditPurchaseChoice);
                 startEditPurchaseMenuSection(period, purchase);
             }
+        } else {
+            printDontExistMessage("Purchase");
         }
+    }
+
+    public static void printDontExistMessage(String title) {
+        System.out.println("No " + title + " exists yet.");
     }
 
     public static void printSuccessfullyEditedMessage(String title) {
@@ -530,7 +536,7 @@ public class UI {
     public static void printRemovePurchaseUserSection(Period period, Purchase purchase) {
         printTitle("Remove Purchase Users");
         ArrayList<PersonCoefficient> purchaseUsers = purchase.getPurchaseUsers();
-        PersonCoefficient.printPersonCoefficients(purchaseUsers);
+        System.out.println(PersonCoefficient.printPersonCoefficients(purchaseUsers));
         int userDeleteChoice = getUserIntInput("Which purchase user do you want to remove (enter the number)? ") - 1;
         if (PersonCoefficient.isInvalidIndex(purchaseUsers, userDeleteChoice)) {
             printInvalidChoice();
@@ -568,6 +574,9 @@ public class UI {
     public static Person getUserPersonChoice(String title, ArrayList<Person> persons) {
         System.out.println(title);
         Person.printPersons(persons);
+        if (persons.size()==0) {
+            return null;
+        }
         int personIndexInput = getUserIntInput("Enter Person number: ") - 1;
         if (Person.isInvalidIndex(persons, personIndexInput)) {
             printInvalidChoice();
@@ -592,6 +601,9 @@ public class UI {
                 startEditPeriodMenu();
             }
             Person buyer = getUserPersonChoice("Choose Buyer: ", period.getPersons());
+            if (buyer == null) {
+                startAddPurchaseToPeriodSection(period);
+            }
             ArrayList<PersonCoefficient> purchaseUsers = getPurchaseUsers(period);
             Purchase purchase = new Purchase(title, expense, buyer, purchaseUsers, dateAndTime);
             period.addPurchase(purchase);
