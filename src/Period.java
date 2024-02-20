@@ -12,6 +12,7 @@ public class Period {
     private ArrayList<Purchase> purchases;
     private static SimpleDateFormat dateAndTimeParser = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private HashMap<Person, HashMap<Person, Integer>> payments = new HashMap<Person, HashMap<Person, Integer>>();
+
     public Period(String name, Date startDate) {
         this.name = name;
         this.startDate = startDate;
@@ -255,10 +256,14 @@ public class Period {
 
     public static int calculateDebts(HashMap<Person, Integer> debtorsDebts) {
         int debt = 0;
-        for (Map.Entry<Person, Integer> entry : debtorsDebts.entrySet()) {
-            debt += entry.getValue();
+        if (debtorsDebts==null) {
+            return 0;
+        }else{
+            for (Map.Entry<Person, Integer> entry : debtorsDebts.entrySet()) {
+                debt += entry.getValue();
+            }
+            return debt;
         }
-        return debt;
     }
 
     public static int calculateCredits(HashMap<Person, HashMap<Person, Integer>> data, Person creditor) {
@@ -273,50 +278,53 @@ public class Period {
         return credit;
     }
 
-    public static HashMap<Person, Integer> calculatePersonsNetPayment(HashMap<Person, HashMap<Person, Integer>> data) {
+    public HashMap<Person, Integer> calculatePersonsNetPayment(HashMap<Person, HashMap<Person, Integer>> data) {
         HashMap<Person, Integer> personsNetPayment = new HashMap<Person, Integer>();
-        for (Map.Entry<Person, HashMap<Person, Integer>> debtorEntry : data.entrySet()) {
-            Person debtor = debtorEntry.getKey();
+        for (int i = 0; i < this.getPersonsInvolvedInPurchases().size(); i++) {
+            Person debtor = this.getPersonsInvolvedInPurchases().get(i);
             int netPayment = calculateCredits(data, debtor) - calculateDebts(data.get(debtor));
             personsNetPayment.put(debtor, netPayment);
         }
         return personsNetPayment;
     }
 
-    public static void calculatePersonCreditsAndDebits(HashMap<Person, Integer> personNetPayment) {
+    public void calculatePersonCreditsAndDebits(HashMap<Person, Integer> personNetPayment) {
         Person maxCredit = Utils.getPersonWithMaxNet(personNetPayment);
         Person maxDebit = Utils.getPersonWithMinNet(personNetPayment);
         if (personNetPayment.get(maxCredit) == 0 && personNetPayment.get(maxDebit) == 0) {
             return;
         }
+
         int min = Utils.minOfTwoIntegers(-personNetPayment.get(maxDebit), personNetPayment.get(maxCredit));
         personNetPayment.put(maxCredit, personNetPayment.get(maxCredit) - min);
         personNetPayment.put(maxDebit, personNetPayment.get(maxDebit) + min);
         HashMap<Person, Integer> creditorMap = new HashMap<Person, Integer>();
         creditorMap.put(maxCredit, min);
-        payments.put(maxDebit, creditorMap);
+        this.payments.put(maxDebit, creditorMap);
         calculatePersonCreditsAndDebits(personNetPayment);
     }
 
     public void printPeriodDebtsAndCredits(){
-        HashMap<Person, HashMap<Person, Integer>> normalizedData = this.normalizeDataForGraph();
-        HashMap<Person, Integer> personsNetPayments = calculatePersonsNetPayment(normalizedData);
-        calculatePersonCreditsAndDebits(personsNetPayments);
-        if (payments.size()==0) {
+        UI.printTitle("Payment Details");
+        if (this.getPurchases().size()==0) {
             System.out.println("No period detail exist yet.");
         } else {
+            HashMap<Person, HashMap<Person, Integer>> normalizedData = this.normalizeDataForGraph();
+            HashMap<Person, Integer> personsNetPayments = this.calculatePersonsNetPayment(normalizedData);
+            calculatePersonCreditsAndDebits(personsNetPayments);
             String format = "|%-10s  |%-35s|%-12s|%-10s|%-35s|%n";
             System.out.printf(format, "NO.", "Person", "Action", "Amount", "Person");
             System.out
                     .print(String.format("|%012d|%035d|%012d|%010|%035|%n", 0, 0, 0,0,0)
                             .replace("0", "-"));
             int index = 0;
-            for (Map.Entry<Person,HashMap<Person, Integer>> entry: this.payments.entrySet()) {
-                Person creditor = entry.getKey()
-                Integer amount = 
-                System.out.printf(format, (index + 1), entry.getKey(), "Should Pay",);
+            for (Map.Entry<Person,HashMap<Person, Integer>> debtorEntry: this.payments.entrySet()) {
+                for (Map.Entry<Person, Integer> creditorEntry : debtorEntry.getValue().entrySet()) {
+                    Person creditor = creditorEntry.getKey();
+                    Integer amount = creditorEntry.getValue();
+                    System.out.printf(format, (index + 1), debtorEntry.getKey(), "Should Pay", amount, creditor);
+                }
             }
         }
     }
-
 }
