@@ -1,6 +1,4 @@
 import java.io.Serializable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,7 +9,6 @@ public class Period implements Serializable{
     private Date startDate;
     private ArrayList<Person> persons;
     private ArrayList<Purchase> purchases;
-    private static SimpleDateFormat dateAndTimeParser = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     private HashMap<Person, HashMap<Person, Integer>> payments = new HashMap<Person, HashMap<Person, Integer>>();
 
     public Period(String name, Date startDate) {
@@ -51,16 +48,6 @@ public class Period implements Serializable{
 
     public void addPurchase(Purchase purchase) {
         this.purchases.add(purchase);
-    }
-
-    public static Date getDateByDateString(String startDateAndTimeInput) {
-        try {
-            dateAndTimeParser.setLenient(false);
-            Date dateAndTime = dateAndTimeParser.parse(startDateAndTimeInput);
-            return dateAndTime;
-        } catch (ParseException e) {
-            return null;
-        }
     }
 
     public static void printListOfPeriods(ArrayList<Period> periods) {
@@ -109,7 +96,7 @@ public class Period implements Serializable{
 
     public static void printPeriodDetail(Period period) {
         UI.printTitle("'" + period.getName() + "'s' period detail");
-        System.out.println("Start date and time: " + dateAndTimeParser.format(period.getStartDate()));
+        System.out.println("Start date and time: " + Utils.dateAndTimeParser.format(period.getStartDate()));
         System.out.println("Number of persons in this period: " + period.persons.size());
         System.out.println("Total Expenses: " + period.getTotalExpenses());
         System.out.println("Number of purchases in period: " + period.getPurchases().size());
