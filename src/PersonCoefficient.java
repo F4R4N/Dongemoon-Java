@@ -60,9 +60,9 @@ public class PersonCoefficient implements Serializable{
         }
     }
 
-    public static boolean doesPersonExistInPurchaseUsers(Purchase purchase, Person person) {
-        for (int i = 0; i < purchase.getPurchaseUsers().size(); i++) {
-            if (purchase.getPurchaseUsers().get(i).getPerson() == person) {
+    public static boolean doesPersonExistInConsumers(Purchase purchase, Person person) {
+        for (int i = 0; i < purchase.getConsumers().size(); i++) {
+            if (purchase.getConsumers().get(i).getPerson() == person) {
                 return true;
             }
         }

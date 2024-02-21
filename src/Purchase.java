@@ -7,15 +7,15 @@ public class Purchase implements Serializable{
     private int expense;
     private Person buyer;
     private Date dateAndTime;
-    private ArrayList<PersonCoefficient> purchaseUsers;
+    private ArrayList<PersonCoefficient> consumers;
 
-    public Purchase(String title, int expense, Person buyer, ArrayList<PersonCoefficient> purchaseUsers,
+    public Purchase(String title, int expense, Person buyer, ArrayList<PersonCoefficient> consumers,
             Date dateAndTime) {
         this.title = title;
         this.expense = expense;
         this.buyer = buyer;
         this.dateAndTime = dateAndTime;
-        this.purchaseUsers = purchaseUsers;
+        this.consumers = consumers;
     }
 
     public Date getDateAndTime() {
@@ -34,8 +34,8 @@ public class Purchase implements Serializable{
         return buyer;
     }
 
-    public ArrayList<PersonCoefficient> getPurchaseUsers() {
-        return purchaseUsers;
+    public ArrayList<PersonCoefficient> getConsumers() {
+        return consumers;
     }
 
     public void setDateAndTime(Date dateAndTime) {
@@ -54,16 +54,16 @@ public class Purchase implements Serializable{
         this.buyer = buyer;
     }
 
-    public void setPurchaseUsers(ArrayList<PersonCoefficient> purchaseUsers) {
-        this.purchaseUsers = purchaseUsers;
+    public void setConsumers(ArrayList<PersonCoefficient> consumers) {
+        this.consumers = consumers;
     }
 
-    public void addToPurchaseUsers(PersonCoefficient personCoefficient) {
-        this.purchaseUsers.add(personCoefficient);
+    public void addToConsumers(PersonCoefficient personCoefficient) {
+        this.consumers.add(personCoefficient);
     }
 
-    public void removeFromPurchaseUsers(PersonCoefficient personCoefficient) {
-        this.purchaseUsers.remove(personCoefficient);
+    public void removeFromConsumers(PersonCoefficient personCoefficient) {
+        this.consumers.remove(personCoefficient);
     }
 
     public static void printListOfPurchases(ArrayList<Purchase> purchases) {
@@ -72,14 +72,14 @@ public class Purchase implements Serializable{
         } else {
             String format = "|%-10s  |%-30s|%-35s|%-15s|%-20s|%-57s|%n";
             String dataFormat = "|%-10s  |%-30s|%-35s|%-15s|%-20s|%-57s";
-            System.out.printf(format, "NO.", "Title", "Date and Time", "Expense", "Buyer", "Purchase Users");
+            System.out.printf(format, "NO.", "Title", "Date and Time", "Expense", "Buyer", "Consumers");
             System.out
                     .print(String.format("|%012d|%030d|%035d|%015d|%020d|%057d|%n", 0, 0, 0, 0, 0,0)
                             .replace("0", "="));
             for (int index = 0; index < purchases.size(); index++) {
                 Purchase purchase = purchases.get(index);
                 System.out.printf(dataFormat, (index + 1), purchase.getTitle(), purchase.getDateAndTime(),
-                purchase.getExpense(), purchase.getBuyer().getName(), PersonCoefficient.getPersonCoefficientTableForPurchase(purchase.getPurchaseUsers()));
+                purchase.getExpense(), purchase.getBuyer().getName(), PersonCoefficient.getPersonCoefficientTableForPurchase(purchase.getConsumers()));
                 System.out.print(String.format("|%012d|%030d|%035d|%015d|%020d|%057d|%n", 0, 0, 0, 0, 0, 0).replace("0", "-"));
             }
         }
@@ -110,13 +110,13 @@ public class Purchase implements Serializable{
         return filteredPurchases;
     }
 
-    public static ArrayList<Purchase> getPurchaseUsersFilteredPurchases(Period period, Person person) {
+    public static ArrayList<Purchase> getConsumersFilteredPurchases(Period period, Person person) {
         ArrayList<Purchase> filteredPurchases = new ArrayList<Purchase>();
         for (int i = 0; i < period.getPurchases().size(); i++) {
             Purchase purchase = period.getPurchases().get(i);
-            for (int j = 0; j < purchase.getPurchaseUsers().size(); j++) {
-                PersonCoefficient purchaseUser = purchase.getPurchaseUsers().get(j);
-                if (purchaseUser.getPerson() == person) {
+            for (int j = 0; j < purchase.getConsumers().size(); j++) {
+                PersonCoefficient consumer = purchase.getConsumers().get(j);
+                if (consumer.getPerson() == person) {
                     filteredPurchases.add(purchase);
                 }
             }
@@ -127,17 +127,17 @@ public class Purchase implements Serializable{
     public static ArrayList<Purchase> clonePurchases(ArrayList<Purchase> purchases){
         ArrayList<Purchase> clonedPurchases = new ArrayList<Purchase>();
         for (int index = 0; index < purchases.size(); index++) {
-            clonedPurchases.add(new Purchase(purchases.get(index).getTitle(), purchases.get(index).getExpense(), purchases.get(index).getBuyer(), purchases.get(index).getPurchaseUsers(), purchases.get(index).getDateAndTime()));
+            clonedPurchases.add(new Purchase(purchases.get(index).getTitle(), purchases.get(index).getExpense(), purchases.get(index).getBuyer(), purchases.get(index).getConsumers(), purchases.get(index).getDateAndTime()));
         }
         return clonedPurchases;
     }
 
-    public int calculatePurchaseUserShare(PersonCoefficient purchaseUser){
+    public int calculateConsumerShare(PersonCoefficient consumer){
         int coefficientSum = 0;
-        for (int index = 0; index < this.purchaseUsers.size(); index++) {
-            coefficientSum += this.purchaseUsers.get(index).getCoefficient();
+        for (int index = 0; index < this.consumers.size(); index++) {
+            coefficientSum += this.consumers.get(index).getCoefficient();
         }
         int eachCoefficientExpense = this.getExpense() / coefficientSum;
-        return purchaseUser.getCoefficient() * eachCoefficientExpense;
+        return consumer.getCoefficient() * eachCoefficientExpense;
     }
 }

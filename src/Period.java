@@ -146,10 +146,10 @@ public class Period implements Serializable{
             Integer personExpenseSum = personsDirectExpenses.getOrDefault(purchase.getBuyer(), 0)
                     + purchase.getExpense();
             personsDirectExpenses.put(purchase.getBuyer(), personExpenseSum);
-            for (int i = 0; i < purchase.getPurchaseUsers().size(); i++) {
-                PersonCoefficient purchaseUser = purchase.getPurchaseUsers().get(i);
-                Integer purchaseUserExpenseSum = personsDirectExpenses.getOrDefault(purchaseUser.getPerson(), 0);
-                personsDirectExpenses.put(purchaseUser.getPerson(), purchaseUserExpenseSum);
+            for (int i = 0; i < purchase.getConsumers().size(); i++) {
+                PersonCoefficient consumer = purchase.getConsumers().get(i);
+                Integer consumerExpenseSum = personsDirectExpenses.getOrDefault(consumer.getPerson(), 0);
+                personsDirectExpenses.put(consumer.getPerson(), consumerExpenseSum);
             }
         }
         return personsDirectExpenses;
@@ -189,8 +189,8 @@ public class Period implements Serializable{
             if (period.getPurchases().get(i).getBuyer() == person) {
                 isInvolved = true;
             }
-            for (int j = 0; j < period.getPurchases().get(i).getPurchaseUsers().size(); j++) {
-                if (period.getPurchases().get(i).getPurchaseUsers().get(j).getPerson() == person) {
+            for (int j = 0; j < period.getPurchases().get(i).getConsumers().size(); j++) {
+                if (period.getPurchases().get(i).getConsumers().get(j).getPerson() == person) {
                     isInvolved = true;
                 }
             }
@@ -236,18 +236,18 @@ public class Period implements Serializable{
         HashMap<Person, HashMap<Person, Integer>> debtorsData = new HashMap<Person, HashMap<Person, Integer>>();
         for (int index = 0; index < this.getPurchases().size(); index++) {
             Purchase purchase = this.getPurchases().get(index);
-            for (int i = 0; i < purchase.getPurchaseUsers().size(); i++) {
-                PersonCoefficient purchaseUser = purchase.getPurchaseUsers().get(i);
+            for (int i = 0; i < purchase.getConsumers().size(); i++) {
+                PersonCoefficient consumer = purchase.getConsumers().get(i);
                 HashMap<Person, Integer> creditor = new HashMap<Person, Integer>();
-                int purchaseUserShare = purchase.calculatePurchaseUserShare(purchaseUser);
-                creditor.put(purchase.getBuyer(), purchaseUserShare);
-                if (debtorsData.containsKey(purchaseUser.getPerson())) {
-                    Integer debtSum = debtorsData.get(purchaseUser.getPerson()).getOrDefault(purchase.getBuyer(), 0)
-                            + purchaseUserShare;
-                    debtorsData.get(purchaseUser.getPerson()).put(purchase.getBuyer(), debtSum);
+                int consumerShare = purchase.calculateConsumerShare(consumer);
+                creditor.put(purchase.getBuyer(), consumerShare);
+                if (debtorsData.containsKey(consumer.getPerson())) {
+                    Integer debtSum = debtorsData.get(consumer.getPerson()).getOrDefault(purchase.getBuyer(), 0)
+                            + consumerShare;
+                    debtorsData.get(consumer.getPerson()).put(purchase.getBuyer(), debtSum);
                 } else {
-                    if (purchaseUser.getPerson() != purchase.getBuyer()) {
-                        debtorsData.put(purchaseUser.getPerson(), creditor);
+                    if (consumer.getPerson() != purchase.getBuyer()) {
+                        debtorsData.put(consumer.getPerson(), creditor);
                     }
                 }
             }
