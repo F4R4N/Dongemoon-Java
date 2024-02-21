@@ -206,16 +206,16 @@ public class UI {
         }
         String fileName = getUserStringInput(
                 "Enter Exported File name (Leave empty to name the file after period's name): ");
-                if (fileName.isEmpty()) {
-                    fileName = period.getName();
-                }
-                fileName+=".csv";
+        if (fileName.isEmpty()) {
+            fileName = period.getName();
+        }
+        fileName += ".csv";
         String exportData = period.getExportData();
         if (exportData == null) {
             startUserMainMenuSection();
         }
         Database.writePeriodDataToFile(exportData, fileName);
-        System.out.println("Period Data successfully exported to: "+fileName);
+        System.out.println("Period Data successfully exported to: " + fileName);
     }
 
     public static void printInvalidDateAndTime() {

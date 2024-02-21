@@ -333,7 +333,8 @@ public class Period implements Serializable {
         String purchasesData = "\n\nPurchases:\nTitle,Expense,Buyer,Date and Time,Consumers\n";
         for (int index = 0; index < this.getPurchases().size(); index++) {
             Purchase purchase = this.getPurchases().get(index);
-            purchasesData += purchase.getTitle() + "," + purchase.getExpense() + "," + purchase.getBuyer().getName() + ","
+            purchasesData += purchase.getTitle() + "," + purchase.getExpense() + "," + purchase.getBuyer().getName()
+                    + ","
                     + purchase.getDateAndTime() + ",\"";
             for (int j = 0; j < purchase.getConsumers().size(); j++) {
                 purchasesData += purchase.getConsumers().get(j).getPerson().getName() + ": "
@@ -353,7 +354,8 @@ public class Period implements Serializable {
             this.setPaymentsData();
             for (Map.Entry<Person, HashMap<Person, Integer>> debtorsEntry : this.getPayments().entrySet()) {
                 for (Map.Entry<Person, Integer> creditorEntry : debtorsEntry.getValue().entrySet()) {
-                    periodDetailData += debtorsEntry.getKey().getName() + ",Should Pay," + creditorEntry.getValue() + ","
+                    periodDetailData += debtorsEntry.getKey().getName() + ",Should Pay," + creditorEntry.getValue()
+                            + ","
                             + creditorEntry.getKey().getName() + "\n";
                 }
             }
@@ -364,14 +366,14 @@ public class Period implements Serializable {
     public String getExportData() {
         String data = "";
         data += "Name:," + this.getName() + "\nStart Date and Time:," + this.getStartDateAndTime() + "\nPersons:,";
-        data += "\""+getPersonsCommaSeparated()+"\"";
+        data += "\"" + getPersonsCommaSeparated() + "\"";
         data += getPurchasesCommaSeparated();
         data += "\nDetails:\nNumber of Persons in Period:," + this.getPersons().size() + "\nTotal Expenses:,"
                 + this.getTotalExpenses() + "\nNumber of Purchases:," + this.getPurchases().size()
                 + "\nEach Persons Average Expense:," + this.getOverallPersonAverageExpense();
-        if (getPeriodDetailCommaSeparated()==null) {
+        if (getPeriodDetailCommaSeparated() == null) {
             return null;
-        }else{
+        } else {
             data += getPeriodDetailCommaSeparated();
         }
         return data;

@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.io.Serializable;
+
 public class User implements Serializable {
     private String username;
     private String password;
@@ -7,7 +8,7 @@ public class User implements Serializable {
     private ArrayList<Period> periods;
     private static User loggedInUser;
 
-    public User(String username, String password, String name)  {
+    public User(String username, String password, String name) {
         this.username = username;
         this.password = password;
         this.name = name;
@@ -18,9 +19,10 @@ public class User implements Serializable {
         return periods;
     }
 
-    public void addToPeriods(Period period){
+    public void addToPeriods(Period period) {
         this.periods.add(period);
     }
+
     public String getUsername() {
         return username;
     }
@@ -36,7 +38,8 @@ public class User implements Serializable {
     public static User getLoggedInUser() {
         return loggedInUser;
     }
-    public void removePeriod(Period period){
+
+    public void removePeriod(Period period) {
         this.periods.remove(period);
     }
 
@@ -67,7 +70,7 @@ public class User implements Serializable {
         }
         return false;
     }
-    
+
     public static User getUserObject(String username, String password) {
         for (int i = 0; i < Database.getUsers().size(); i++) {
             User user = Database.getUsers().get(i);
@@ -77,5 +80,5 @@ public class User implements Serializable {
         }
         return null;
     }
-    
+
 }

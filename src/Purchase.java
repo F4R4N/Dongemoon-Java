@@ -2,7 +2,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Purchase implements Serializable{
+public class Purchase implements Serializable {
     private String title;
     private int expense;
     private Person buyer;
@@ -74,17 +74,19 @@ public class Purchase implements Serializable{
             String dataFormat = "|%-10s  |%-30s|%-35s|%-15s|%-20s|%-57s";
             System.out.printf(format, "NO.", "Title", "Date and Time", "Expense", "Buyer", "Consumers");
             System.out
-                    .print(String.format("|%012d|%030d|%035d|%015d|%020d|%057d|%n", 0, 0, 0, 0, 0,0)
+                    .print(String.format("|%012d|%030d|%035d|%015d|%020d|%057d|%n", 0, 0, 0, 0, 0, 0)
                             .replace("0", "="));
             for (int index = 0; index < purchases.size(); index++) {
                 Purchase purchase = purchases.get(index);
                 System.out.printf(dataFormat, (index + 1), purchase.getTitle(), purchase.getDateAndTime(),
-                purchase.getExpense(), purchase.getBuyer().getName(), PersonCoefficient.getPersonCoefficientTableForPurchase(purchase.getConsumers()));
-                System.out.print(String.format("|%012d|%030d|%035d|%015d|%020d|%057d|%n", 0, 0, 0, 0, 0, 0).replace("0", "-"));
+                        purchase.getExpense(), purchase.getBuyer().getName(),
+                        PersonCoefficient.getPersonCoefficientTableForPurchase(purchase.getConsumers()));
+                System.out.print(
+                        String.format("|%012d|%030d|%035d|%015d|%020d|%057d|%n", 0, 0, 0, 0, 0, 0).replace("0", "-"));
             }
         }
     }
-    
+
     public static boolean isInvalidIndex(ArrayList<Purchase> purchases, int purchaseIndexInput) {
         return purchaseIndexInput > purchases.size() - 1 || purchaseIndexInput < 0;
     }
@@ -124,15 +126,17 @@ public class Purchase implements Serializable{
         return filteredPurchases;
     }
 
-    public static ArrayList<Purchase> clonePurchases(ArrayList<Purchase> purchases){
+    public static ArrayList<Purchase> clonePurchases(ArrayList<Purchase> purchases) {
         ArrayList<Purchase> clonedPurchases = new ArrayList<Purchase>();
         for (int index = 0; index < purchases.size(); index++) {
-            clonedPurchases.add(new Purchase(purchases.get(index).getTitle(), purchases.get(index).getExpense(), purchases.get(index).getBuyer(), purchases.get(index).getConsumers(), purchases.get(index).getDateAndTime()));
+            clonedPurchases.add(new Purchase(purchases.get(index).getTitle(), purchases.get(index).getExpense(),
+                    purchases.get(index).getBuyer(), purchases.get(index).getConsumers(),
+                    purchases.get(index).getDateAndTime()));
         }
         return clonedPurchases;
     }
 
-    public int calculateConsumerShare(PersonCoefficient consumer){
+    public int calculateConsumerShare(PersonCoefficient consumer) {
         int coefficientSum = 0;
         for (int index = 0; index < this.consumers.size(); index++) {
             coefficientSum += this.consumers.get(index).getCoefficient();

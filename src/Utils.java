@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public class Utils {
     public static SimpleDateFormat dateAndTimeParser = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
     public static boolean isStringEmptyOrNull(String string) {
         return string == null || string.isEmpty();
     }

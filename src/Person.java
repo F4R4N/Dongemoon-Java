@@ -1,10 +1,10 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Person implements Serializable{
+public class Person implements Serializable {
     private String name;
 
-    public Person(String name){
+    public Person(String name) {
         this.name = name;
     }
 
@@ -16,9 +16,9 @@ public class Person implements Serializable{
         this.name = name;
     }
 
-    public static ArrayList<Person> getAllExistingPersons(){
+    public static ArrayList<Person> getAllExistingPersons() {
         ArrayList<Person> allPersons = new ArrayList<Person>();
-        if (User.getLoggedInUser().getPeriods()==null) {
+        if (User.getLoggedInUser().getPeriods() == null) {
             return allPersons;
         }
         for (int index = 0; index < User.getLoggedInUser().getPeriods().size(); index++) {
@@ -32,20 +32,8 @@ public class Person implements Serializable{
         return allPersons;
     }
 
-    public static Person getOrCreatePerson(String personInput){ //TODO POSSIBLE DELETE
-        Person person;
-        for (int i = 0; i < Person.getAllExistingPersons().size(); i++) {
-            if (Person.getAllExistingPersons().get(i).getName().equals(personInput)) {
-                person = Person.getAllExistingPersons().get(i);
-                return person;
-            }
-        }
-        person = new Person(personInput);
-        return person;
-    }
-
     public static void printPersons(ArrayList<Person> persons) {
-        if (persons.size()==0) {
+        if (persons.size() == 0) {
             System.out.println("No person exist yet");
         } else {
             String format = "|%-10s  |%-30s|%n";
@@ -64,7 +52,7 @@ public class Person implements Serializable{
         return personIndexInput > persons.size() - 1 || personIndexInput < 0;
     }
 
-    public static boolean isNameDuplicated(ArrayList<Person> persons, String name){
+    public static boolean isNameDuplicated(ArrayList<Person> persons, String name) {
         for (int index = 0; index < persons.size(); index++) {
             if (persons.get(index).getName().equals(name)) {
                 return true;
@@ -72,5 +60,4 @@ public class Person implements Serializable{
         }
         return false;
     }
-
 }
