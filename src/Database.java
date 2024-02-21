@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class Database {
@@ -51,7 +52,13 @@ public class Database {
         }
     }
 
-    public static void writePeriodDataToFile(String periodData){
-
+    public static void writePeriodDataToFile(String periodData, String fileName){
+        try{
+            PrintWriter out = new PrintWriter(fileName);
+            out.print(periodData);
+            out.close();
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
     }
 }
