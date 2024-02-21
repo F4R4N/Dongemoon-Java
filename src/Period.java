@@ -21,6 +21,7 @@ public class Period implements Serializable {
     public HashMap<Person, HashMap<Person, Integer>> getPayments() {
         return payments;
     }
+
     public void setPayments(HashMap<Person, HashMap<Person, Integer>> payments) {
         this.payments = payments;
     }
@@ -289,7 +290,7 @@ public class Period implements Serializable {
         calculatePersonCreditsAndDebits(personNetPayment);
     }
 
-    public void setPaymentsData(){
+    public void setPaymentsData() {
         HashMap<Person, HashMap<Person, Integer>> normalizedData = this.normalizeDebtorsData();
         HashMap<Person, Integer> personsNetPayments = this.calculatePersonsNetPayment(normalizedData);
         this.setPayments(new HashMap<Person, HashMap<Person, Integer>>());
@@ -329,26 +330,50 @@ public class Period implements Serializable {
     }
 
     public String getPurchasesCommaSeparated() {
-        String purchasesData = "\nPurchases:\nTitle,Expense,Buyer,Date and Time,Consumers\n";
+        String purchasesData = "\n\nPurchases:\nTitle,Expense,Buyer,Date and Time,Consumers\n";
         for (int index = 0; index < this.getPurchases().size(); index++) {
             Purchase purchase = this.getPurchases().get(index);
-            purchasesData += purchase.getTitle() + "," + purchase.getExpense() + "," + purchase.getBuyer() + ",\""
-                    + purchase.getDateAndTime() + ",";
+            purchasesData += purchase.getTitle() + "," + purchase.getExpense() + "," + purchase.getBuyer().getName() + ","
+                    + purchase.getDateAndTime() + ",\"";
             for (int j = 0; j < purchase.getConsumers().size(); j++) {
                 purchasesData += purchase.getConsumers().get(j).getPerson().getName() + ": "
-                        + purchase.getConsumers().get(j).getCoefficient() + "\n";
+                        + purchase.getConsumers().get(j).getCoefficient();
             }
-            purchasesData += "\"";
+            purchasesData += "\"\n";
         }
         return purchasesData;
+    }
+
+    public String getPeriodDetailCommaSeparated() {
+        String periodDetailData = "\n\nPeriod Payment Details:\nPerson,Action,Amount,To Person\n";
+        if (this.getPurchases().size() == 0) {
+            System.out.println("No period detail exist yet. try creating a purchase first.");
+            return null;
+        } else {
+            this.setPaymentsData();
+            for (Map.Entry<Person, HashMap<Person, Integer>> debtorsEntry : this.getPayments().entrySet()) {
+                for (Map.Entry<Person, Integer> creditorEntry : debtorsEntry.getValue().entrySet()) {
+                    periodDetailData += debtorsEntry.getKey().getName() + ",Should Pay," + creditorEntry.getValue() + ","
+                            + creditorEntry.getKey().getName() + "\n";
+                }
+            }
+            return periodDetailData;
+        }
     }
 
     public String getExportData() {
         String data = "";
         data += "Name:," + this.getName() + "\nStart Date and Time:," + this.getStartDateAndTime() + "\nPersons:,";
-        data += getPersonsCommaSeparated();
+        data += "\""+getPersonsCommaSeparated()+"\"";
         data += getPurchasesCommaSeparated();
-        data+="\nDetails:\nNumber of Persons in Period:,"+this.getPersons().size()+"\nTotal Expenses:,"+this.getTotalExpenses()+"\nNumber of Purchases:,"+this.getPurchases().size()+"\nEach Persons Average Expense:,"+this.getOverallPersonAverageExpense();
-        data+=""
+        data += "\nDetails:\nNumber of Persons in Period:," + this.getPersons().size() + "\nTotal Expenses:,"
+                + this.getTotalExpenses() + "\nNumber of Purchases:," + this.getPurchases().size()
+                + "\nEach Persons Average Expense:," + this.getOverallPersonAverageExpense();
+        if (getPeriodDetailCommaSeparated()==null) {
+            return null;
+        }else{
+            data += getPeriodDetailCommaSeparated();
+        }
+        return data;
     }
 }
