@@ -4,26 +4,33 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Period implements Serializable{
+public class Period implements Serializable {
     private String name;
-    private Date startDate;
+    private Date startDateAndTime;
     private ArrayList<Person> persons;
     private ArrayList<Purchase> purchases;
     private HashMap<Person, HashMap<Person, Integer>> payments = new HashMap<Person, HashMap<Person, Integer>>();
 
-    public Period(String name, Date startDate) {
+    public Period(String name, Date startDateAndTime) {
         this.name = name;
-        this.startDate = startDate;
+        this.startDateAndTime = startDateAndTime;
         this.persons = new ArrayList<Person>();
         this.purchases = new ArrayList<Purchase>();
+    }
+
+    public HashMap<Person, HashMap<Person, Integer>> getPayments() {
+        return payments;
+    }
+    public void setPayments(HashMap<Person, HashMap<Person, Integer>> payments) {
+        this.payments = payments;
     }
 
     public String getName() {
         return name;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public Date getStartDateAndTime() {
+        return startDateAndTime;
     }
 
     public ArrayList<Person> getPersons() {
@@ -38,8 +45,8 @@ public class Period implements Serializable{
         this.name = name;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setStartDateAndTime(Date startDateAndTime) {
+        this.startDateAndTime = startDateAndTime;
     }
 
     public void addPerson(Person person) {
@@ -61,7 +68,7 @@ public class Period implements Serializable{
                             .replace("0", "="));
             for (int index = 0; index < periods.size(); index++) {
                 Period period = periods.get(index);
-                System.out.printf(format, (index + 1), period.getName(), period.getStartDate());
+                System.out.printf(format, (index + 1), period.getName(), period.getStartDateAndTime());
             }
         }
     }
@@ -77,7 +84,7 @@ public class Period implements Serializable{
                             .replace("0", "="));
             for (int index = 0; index < periods.size(); index++) {
                 Period period = periods.get(index);
-                System.out.printf(format, (index + 1), period.getName(), period.getStartDate());
+                System.out.printf(format, (index + 1), period.getName(), period.getStartDateAndTime());
                 Person.printPersons(period.getPersons());
                 UI.printPurchasesInPeriod(period);
                 System.out.println(
@@ -94,18 +101,18 @@ public class Period implements Serializable{
         return expenses;
     }
 
-    public static void printPeriodDetail(Period period) {
-        UI.printTitle("'" + period.getName() + "'s' period detail");
-        System.out.println("Start date and time: " + Utils.dateAndTimeParser.format(period.getStartDate()));
-        System.out.println("Number of persons in this period: " + period.persons.size());
-        System.out.println("Total Expenses: " + period.getTotalExpenses());
-        System.out.println("Number of purchases in period: " + period.getPurchases().size());
-        System.out.println("Each persons average expense: " + period.getOverallPersonAverageExpense());
-        HashMap<Person, Integer> personDirectExpenses = period.getPersonsDirectExpenses();
-        printPersonsDirectExpenses(period, personDirectExpenses);
-        period.printPeriodDebtsAndCredits();
+    public void printPeriodDetail() {
+        UI.printTitle("'" + this.getName() + "'s' period detail");
+        System.out.println("Start date and time: " + Utils.dateAndTimeParser.format(this.getStartDateAndTime()));
+        System.out.println("Number of persons in this period: " + this.persons.size());
+        System.out.println("Total Expenses: " + this.getTotalExpenses());
+        System.out.println("Number of purchases in period: " + this.getPurchases().size());
+        System.out.println("Each persons average expense: " + this.getOverallPersonAverageExpense());
+        HashMap<Person, Integer> personDirectExpenses = this.getPersonsDirectExpenses();
+        UI.printPersonsDirectExpenses(this, personDirectExpenses);
+        this.printPeriodDebtsAndCredits();
         UI.printTitle("List Of Purchases");
-        Purchase.printListOfPurchases(period.getPurchases());
+        Purchase.printListOfPurchases(this.getPurchases());
     }
 
     public ArrayList<Person> getPersonsInvolvedInPurchases() {
@@ -140,20 +147,6 @@ public class Period implements Serializable{
             }
         }
         return personsDirectExpenses;
-    }
-
-    public static void printPersonsDirectExpenses(Period period, HashMap<Person, Integer> personDirectExpenses) {
-        System.out
-                .println("\nPersons Direct expenses in '" + period.getName()
-                        + "'s' period:\n-------------------------------------------------");
-        if (personDirectExpenses.isEmpty()) {
-            System.out.println("No person or purchases Exist yet.");
-        }
-        for (Map.Entry<Person, Integer> entry : personDirectExpenses.entrySet()) {
-            Person person = entry.getKey();
-            Integer directExpense = entry.getValue();
-            System.out.println("'" + person.getName() + "' has direct expense of: '" + directExpense + "'");
-        }
     }
 
     public static boolean isInvalidIndex(ArrayList<Period> periods, int periodIndexInput) {
@@ -219,7 +212,7 @@ public class Period implements Serializable{
         return clonedPurchases;
     }
 
-    public HashMap<Person, HashMap<Person, Integer>> normalizeDataForGraph() {
+    public HashMap<Person, HashMap<Person, Integer>> normalizeDebtorsData() {
         HashMap<Person, HashMap<Person, Integer>> debtorsData = new HashMap<Person, HashMap<Person, Integer>>();
         for (int index = 0; index < this.getPurchases().size(); index++) {
             Purchase purchase = this.getPurchases().get(index);
@@ -244,9 +237,9 @@ public class Period implements Serializable{
 
     public static int calculateDebts(HashMap<Person, Integer> debtorsDebts) {
         int debt = 0;
-        if (debtorsDebts==null) {
+        if (debtorsDebts == null) {
             return 0;
-        }else{
+        } else {
             for (Map.Entry<Person, Integer> entry : debtorsDebts.entrySet()) {
                 debt += entry.getValue();
             }
@@ -286,38 +279,76 @@ public class Period implements Serializable{
         int min = Utils.minOfTwoIntegers(-personNetPayment.get(maxDebit), personNetPayment.get(maxCredit));
         personNetPayment.put(maxCredit, personNetPayment.get(maxCredit) - min);
         personNetPayment.put(maxDebit, personNetPayment.get(maxDebit) + min);
-        if (this.payments.containsKey(maxDebit)) {
-            this.payments.get(maxDebit).put(maxCredit, min);
-        }else{
+        if (this.getPayments().containsKey(maxDebit)) {
+            this.getPayments().get(maxDebit).put(maxCredit, min);
+        } else {
             HashMap<Person, Integer> creditorMap = new HashMap<Person, Integer>();
             creditorMap.put(maxCredit, min);
-            this.payments.put(maxDebit, creditorMap);
+            this.getPayments().put(maxDebit, creditorMap);
         }
         calculatePersonCreditsAndDebits(personNetPayment);
     }
 
-    public void printPeriodDebtsAndCredits(){
+    public void setPaymentsData(){
+        HashMap<Person, HashMap<Person, Integer>> normalizedData = this.normalizeDebtorsData();
+        HashMap<Person, Integer> personsNetPayments = this.calculatePersonsNetPayment(normalizedData);
+        this.setPayments(new HashMap<Person, HashMap<Person, Integer>>());
+        calculatePersonCreditsAndDebits(personsNetPayments);
+    }
+
+    public void printPeriodDebtsAndCredits() {
         UI.printTitle("Payment Details");
-        if (this.getPurchases().size()==0) {
+        if (this.getPurchases().size() == 0) {
             System.out.println("No period detail exist yet.");
         } else {
-            HashMap<Person, HashMap<Person, Integer>> normalizedData = this.normalizeDataForGraph();
-            HashMap<Person, Integer> personsNetPayments = this.calculatePersonsNetPayment(normalizedData);
-            calculatePersonCreditsAndDebits(personsNetPayments);
+            this.setPaymentsData();
             String format = "|%-10s  |%-35s|%-12s|%-10s|%-35s|%n";
             System.out.printf(format, "NO.", "Person", "Action", "Amount", "To");
             System.out
-                    .print(String.format("|%012d|%035d|%012d|%010d|%035d|%n", 0, 0, 0,0,0)
+                    .print(String.format("|%012d|%035d|%012d|%010d|%035d|%n", 0, 0, 0, 0, 0)
                             .replace("0", "-"));
             int index = 0;
-            for (Map.Entry<Person,HashMap<Person, Integer>> debtorEntry: this.payments.entrySet()) {
+            for (Map.Entry<Person, HashMap<Person, Integer>> debtorEntry : this.getPayments().entrySet()) {
                 for (Map.Entry<Person, Integer> creditorEntry : debtorEntry.getValue().entrySet()) {
                     Person creditor = creditorEntry.getKey();
                     Integer amount = creditorEntry.getValue();
-                    System.out.printf(format, (index + 1), debtorEntry.getKey().getName(), "Should Pay", amount, creditor.getName());
+                    System.out.printf(format, (index + 1), debtorEntry.getKey().getName(), "Should Pay", amount,
+                            creditor.getName());
                     index++;
                 }
             }
         }
+    }
+
+    public String getPersonsCommaSeparated() {
+        String persons = "";
+        for (int index = 0; index < this.getPersons().size(); index++) {
+            persons += this.getPersons().get(index).getName() + ",";
+        }
+        return persons;
+    }
+
+    public String getPurchasesCommaSeparated() {
+        String purchasesData = "\nPurchases:\nTitle,Expense,Buyer,Date and Time,Consumers\n";
+        for (int index = 0; index < this.getPurchases().size(); index++) {
+            Purchase purchase = this.getPurchases().get(index);
+            purchasesData += purchase.getTitle() + "," + purchase.getExpense() + "," + purchase.getBuyer() + ",\""
+                    + purchase.getDateAndTime() + ",";
+            for (int j = 0; j < purchase.getConsumers().size(); j++) {
+                purchasesData += purchase.getConsumers().get(j).getPerson().getName() + ": "
+                        + purchase.getConsumers().get(j).getCoefficient() + "\n";
+            }
+            purchasesData += "\"";
+        }
+        return purchasesData;
+    }
+
+    public String getExportData() {
+        String data = "";
+        data += "Name:," + this.getName() + "\nStart Date and Time:," + this.getStartDateAndTime() + "\nPersons:,";
+        data += getPersonsCommaSeparated();
+        data += getPurchasesCommaSeparated();
+        data+="\nDetails:\nNumber of Persons in Period:,"+this.getPersons().size()+"\nTotal Expenses:,"+this.getTotalExpenses()+"\nNumber of Purchases:,"+this.getPurchases().size()+"\nEach Persons Average Expense:,"+this.getOverallPersonAverageExpense();
+        data+=""
     }
 }
