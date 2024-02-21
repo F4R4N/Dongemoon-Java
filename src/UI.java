@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class UI {
@@ -27,6 +29,21 @@ public class UI {
         }
 
     }
+        public static void printPersonsDirectExpenses(Period period, HashMap<Person, Integer> personDirectExpenses) {
+        System.out
+                .println("\nPersons Direct expenses in '" + period.getName()
+                        + "'s' period:\n-------------------------------------------------");
+        if (personDirectExpenses.isEmpty()) {
+            System.out.println("No person or purchases Exist yet.");
+        }
+        for (Map.Entry<Person, Integer> entry : personDirectExpenses.entrySet()) {
+            Person person = entry.getKey();
+            Integer directExpense = entry.getValue();
+            System.out.println("'" + person.getName() + "' has direct expense of: '" + directExpense + "'");
+        }
+    }
+
+    
 
     private static void showRegisterUserMenu() {
         printTitle("Register");
@@ -107,7 +124,7 @@ public class UI {
         System.out.println(
                 "1- List of Periods\n2- New Period\n3- Periods Details\n4- Edit Period\n5- Remove period\n6- Export data\n7- Save And Logout");
     }
-
+    
     private static void startUserMainMenuSection() {
         printUserMainMenu();
         int userChoice = getUserIntInput(": ");
@@ -133,10 +150,11 @@ public class UI {
                 startUserMainMenuSection();
                 break;
             case 6:
-                // TODO: should have an string comma seperated return it. then write it to csv file.
+                startExportCsvSection();
+                startUserMainMenuSection();
                 break;
             case 7:
-                Database.writeDataToFile();
+                Database.writeProgramDataToFile();
                 initializeUI();
                 break;
             default:
@@ -168,7 +186,7 @@ public class UI {
         printTitle("Create Period");
         String name = getUserStringInput("Name: ");
         String startDateAndTimeInput = getUserStringInput("Start Date and Time (in 'yyyy-MM-dd HH:mm' format): ");
-        Date startDateAndTime = Period.getDateByDateString(startDateAndTimeInput);
+        Date startDateAndTime = Utils.getDateByDateString(startDateAndTimeInput);
         if (startDateAndTime == null) {
             printInvalidDateAndTime();
             startUserMainMenuSection();
@@ -177,6 +195,16 @@ public class UI {
         User.getLoggedInUser().addToPeriods(period);
         printSuccessfullyCreatedMessage("Period");
         startUserMainMenuSection();
+
+    }
+
+    public static void startExportCsvSection(){
+        printTitle("Export Period to CSV");
+        Period period = getUserPeriodChoice("Which period Do you want to export? ", User.getLoggedInUser().getPeriods());
+        String fileName = getUserStringInput("Enter Exported File name (Leave empty to name the file after period's name): ");
+        String exportData = period.getExportData();
+        Database.writePeriodDataToFile(exportData);
+
 
     }
 
@@ -205,7 +233,7 @@ public class UI {
         if (period == null) {
             startUserMainMenuSection();
         } else {
-            Period.printPeriodDetail(period);
+            period.printPeriodDetail();
             if (period.getPurchases().size() != 0) {
                 startPurchaseSortAndFilterMenu(period);
             }
@@ -340,12 +368,12 @@ public class UI {
     public static void showEditStartDateMenu(Period period) {
         printTitle("Edit Start Date");
         String newStartDateInput = getUserStringInput("What is your period's new start date? ");
-        Date startDateAndTime = Period.getDateByDateString(newStartDateInput);
+        Date startDateAndTime = Utils.getDateByDateString(newStartDateInput);
         if (startDateAndTime == null) {
             printInvalidDateAndTime();
             startEditPeriodMenu();
         }
-        period.setStartDate(startDateAndTime);
+        period.setStartDateAndTime(startDateAndTime);
         printSuccessfullyEditedMessage("Start Date and Time");
     }
 
@@ -471,7 +499,7 @@ public class UI {
 
     public static void showEditPurchaseDateAndTimeSection(Period period, Purchase purchase) {
         String newDateAndTimeInput = getUserStringInput("Enter new Date and Time: ");
-        Date newDateAndTime = Period.getDateByDateString(newDateAndTimeInput);
+        Date newDateAndTime = Utils.getDateByDateString(newDateAndTimeInput);
         if (newDateAndTime == null) {
             printInvalidDateAndTime();
             startEditPurchaseMenuSection(period, purchase);
@@ -596,7 +624,7 @@ public class UI {
             String title = getUserStringInput("Title: ");
             int expense = getUserIntInput("Expense: ");
             String dateAndTimeInput = getUserStringInput("Date And Time (in 'yyyy-MM-dd HH:mm' format): ");
-            Date dateAndTime = Period.getDateByDateString(dateAndTimeInput);
+            Date dateAndTime = Utils.getDateByDateString(dateAndTimeInput);
             if (dateAndTime == null) {
                 printInvalidDateAndTime();
                 startEditPeriodMenu();
