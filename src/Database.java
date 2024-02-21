@@ -22,7 +22,7 @@ public class Database {
         users.add(user);
     }
 
-    public static void writeDataToFile() {
+    public static void writeProgramDataToFile() {
         try{
             ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(dataFileName));
             os.writeObject(users);
@@ -34,7 +34,7 @@ public class Database {
         }
     }
 
-    public static void readDataFromFile(){
+    public static void readProgramDataFromFile(){
         try {
             ObjectInputStream is = new ObjectInputStream(new FileInputStream(dataFileName));
             ArrayList<User> users = (ArrayList<User>)is.readObject();
@@ -51,4 +51,7 @@ public class Database {
         }
     }
 
+    public static void writePeriodDataToFile(String periodData){
+
+    }
 }

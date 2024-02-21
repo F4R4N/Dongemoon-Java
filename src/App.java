@@ -1,6 +1,6 @@
 public class App {
     public static void main(String[] args){
-        Database.readDataFromFile();
+        Database.readProgramDataFromFile();
         UI.initializeUI();
     }
 }
