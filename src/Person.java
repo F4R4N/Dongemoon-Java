@@ -1,5 +1,6 @@
 import java.io.Serializable;
 import java.util.ArrayList;
+
 public class Person implements Serializable{
     private String name;
 
@@ -31,7 +32,7 @@ public class Person implements Serializable{
         return allPersons;
     }
 
-    public static Person addOrCreatePerson(String personInput){
+    public static Person getOrCreatePerson(String personInput){ //TODO POSSIBLE DELETE
         Person person;
         for (int i = 0; i < Person.getAllExistingPersons().size(); i++) {
             if (Person.getAllExistingPersons().get(i).getName().equals(personInput)) {

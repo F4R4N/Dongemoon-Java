@@ -29,7 +29,8 @@ public class UI {
         }
 
     }
-        public static void printPersonsDirectExpenses(Period period, HashMap<Person, Integer> personDirectExpenses) {
+
+    public static void printPersonsDirectExpenses(Period period, HashMap<Person, Integer> personDirectExpenses) {
         System.out
                 .println("\nPersons Direct expenses in '" + period.getName()
                         + "'s' period:\n-------------------------------------------------");
@@ -42,8 +43,6 @@ public class UI {
             System.out.println("'" + person.getName() + "' has direct expense of: '" + directExpense + "'");
         }
     }
-
-    
 
     private static void showRegisterUserMenu() {
         printTitle("Register");
@@ -124,7 +123,7 @@ public class UI {
         System.out.println(
                 "1- List of Periods\n2- New Period\n3- Periods Details\n4- Edit Period\n5- Remove period\n6- Export data\n7- Save And Logout");
     }
-    
+
     private static void startUserMainMenuSection() {
         printUserMainMenu();
         int userChoice = getUserIntInput(": ");
@@ -198,14 +197,25 @@ public class UI {
 
     }
 
-    public static void startExportCsvSection(){
+    public static void startExportCsvSection() {
         printTitle("Export Period to CSV");
-        Period period = getUserPeriodChoice("Which period Do you want to export? ", User.getLoggedInUser().getPeriods());
-        String fileName = getUserStringInput("Enter Exported File name (Leave empty to name the file after period's name): ");
+        Period period = getUserPeriodChoice("Which period Do you want to export? ",
+                User.getLoggedInUser().getPeriods());
+        if (period == null) {
+            startUserMainMenuSection();
+        }
+        String fileName = getUserStringInput(
+                "Enter Exported File name (Leave empty to name the file after period's name): ");
+                if (fileName.isEmpty()) {
+                    fileName = period.getName();
+                }
+                fileName+=".csv";
         String exportData = period.getExportData();
-        Database.writePeriodDataToFile(exportData);
-
-
+        if (exportData == null) {
+            startUserMainMenuSection();
+        }
+        Database.writePeriodDataToFile(exportData, fileName);
+        System.out.println("Period Data successfully exported to: "+fileName);
     }
 
     public static void printInvalidDateAndTime() {
