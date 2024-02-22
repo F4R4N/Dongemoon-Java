@@ -42,7 +42,7 @@ public class Database {
             is.close();
             Database.setUsers(users);
         } catch (IOException e) {
-            
+
         } catch (ClassNotFoundException e) {
             System.out.println("Something went wrong");
         } catch (ClassCastException e) {
@@ -56,7 +56,7 @@ public class Database {
             out.print(periodData);
             out.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Could'nt find the file.");
         }
     }
 }

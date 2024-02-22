@@ -43,7 +43,7 @@ public class UI {
         String name = getUserStringInput("Name: ");
         if (Utils.isStringEmptyOrNull(username) || Utils.isStringEmptyOrNull(name)
                 || Utils.isStringEmptyOrNull(password)) {
-            System.out.println("username or password or name cannot be empty.");
+            printCantBeBlank();
             showRegisterUserMenu();
         } else {
             User.registerUser(username, password, name);
@@ -65,7 +65,7 @@ public class UI {
                 initializeUI();
             }
         } else {
-            System.out.println("invalid username or password. Try again");
+            System.out.println(RED+"invalid username or password. Try again"+RESET);
             initializeUI();
         }
     }
@@ -180,7 +180,7 @@ public class UI {
             startUserMainMenuSection();
         }
         Database.writePeriodDataToFile(exportData, fileName);
-        System.out.println("Period Data successfully exported to: " + fileName);
+        System.out.println(GREEN+"Period Data successfully exported to: " + fileName+RESET);
     }
 
     public static Period getUserPeriodChoice(String title, ArrayList<Period> periods) {
@@ -386,10 +386,6 @@ public class UI {
         }
     }
 
-    public static void printSuccessfullyDeletedMessage(String title) {
-        System.out.println(GREEN + title + "Deleted successfully!" + RESET);
-    }
-
     public static void startChoosePurchaseSection(Period period) {
         printTitle("Edit Purchase");
         System.out.println("List of all purchases in " + period.getName() + " period:");
@@ -446,8 +442,7 @@ public class UI {
     public static void showEditPurchaseTitleSection(Period period, Purchase purchase) {
         String newTitle = getUserStringInput("Enter new title: ");
         if (Purchase.isTitleDuplicated(period, newTitle) || Utils.isStringEmptyOrNull(newTitle)) {
-            System.out.println(
-                    "another purchase with this title exists in this period or invalid title. try another title.");
+            printAlreadyExistsMessage("Purchase", "title");
             startEditPurchaseMenuSection(period, purchase);
         } else {
             purchase.setTitle(newTitle);
@@ -521,7 +516,7 @@ public class UI {
             showEditConsumerSection(period, purchase);
         } else {
             if (PersonCoefficient.doesPersonExistInConsumers(purchase, person)) {
-                System.out.println("This person is already in Consumers. try another person.");
+                printAlreadyExistsMessage("Person", "consumers");
                 showEditConsumerSection(period, purchase);
             } else {
                 PersonCoefficient newConsumer = new PersonCoefficient(person, consumerCoefficientChoice);
@@ -629,8 +624,8 @@ public class UI {
     public static ArrayList<PersonCoefficient> getUsersConsumersChoice(Period period) {
         int consumersCount = getUserIntInput("How many Consumers are in this purchase? ");
         if (consumersCount > period.getPersons().size()) {
-            System.out.println(
-                    "the number of Consumers you want to add to purchase is more than persons in period. try adding more persons first.");
+            System.out.println(RED+
+                    "the number of Consumers you want to add to purchase is more than persons in period. try adding more persons first."+RESET);
             startEditPeriodMenu();
         }
         ArrayList<PersonCoefficient> consumers = new ArrayList<PersonCoefficient>();
@@ -694,6 +689,10 @@ public class UI {
 
     public static void printSuccessfullyCreatedMessage(String title) {
         System.out.println(GREEN + title + " Created successfully!" + RESET);
+    }
+    
+    public static void printSuccessfullyDeletedMessage(String title) {
+        System.out.println(GREEN + title + "Deleted successfully!" + RESET);
     }
 
 }
