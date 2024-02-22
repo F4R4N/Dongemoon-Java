@@ -101,8 +101,8 @@ public class Purchase implements Serializable {
         return false;
     }
 
-    public static boolean isExpenseValid(int expense){
-        if (expense<=0) {
+    public static boolean isExpenseValid(int expense) {
+        if (expense <= 0) {
             return false;
         }
         return true;

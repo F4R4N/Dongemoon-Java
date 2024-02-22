@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 public class UI {
@@ -484,7 +482,7 @@ public class UI {
         if (Purchase.isExpenseValid(newExpense)) {
             purchase.setExpense(newExpense);
             printSuccessfullyEditedMessage("Expense");
-        }else{
+        } else {
             System.out.println("Invalid Expense. Expense should be a positive number.");
         }
     }

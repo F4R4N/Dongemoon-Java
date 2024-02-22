@@ -389,6 +389,7 @@ public class Period implements Serializable {
         }
         return data;
     }
+
     public void printPersonsDirectExpenses(HashMap<Person, Integer> personDirectExpenses) {
         System.out
                 .println("\nPersons Direct expenses in '" + this.getName()
