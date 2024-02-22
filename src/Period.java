@@ -60,7 +60,7 @@ public class Period implements Serializable {
 
     public static void printListOfPeriods(ArrayList<Period> periods) {
         if (periods.size() == 0) {
-            System.out.println("No period exist yet.");
+            UI.printDontExistMessage("Period");
         } else {
             String format = "|%-10s  |%-25s|%-35s|%n";
             System.out.printf(format, "NO.", "Name", "Start Date");
@@ -76,7 +76,9 @@ public class Period implements Serializable {
 
     public static void printPeriods(ArrayList<Period> periods) {
         if (periods.size() == 0) {
-            System.out.println("No period exist yet.");
+            UI.printDontExistMessage("Period");
+
+
         } else {
             String format = "|%-10s  |%-25s|%-35s|%n";
             System.out.printf(format, "NO.", "Name", "Start Date");
@@ -311,7 +313,8 @@ public class Period implements Serializable {
     public void printPeriodDebtsAndCredits() {
         UI.printTitle("Payment Details");
         if (this.getPurchases().size() == 0) {
-            System.out.println("No period detail exist yet.");
+            UI.printDontExistMessage("Period Detail");
+
         } else {
             this.setPaymentsData();
             String format = "|%-10s  |%-35s|%-12s|%-10s|%-35s|%n";
@@ -359,7 +362,8 @@ public class Period implements Serializable {
     public String getPeriodDetailCommaSeparated() {
         String periodDetailData = "\n\nPeriod Payment Details:\nPerson,Action,Amount,To Person\n";
         if (this.getPurchases().size() == 0) {
-            System.out.println("No period detail exist yet. try creating a purchase first.");
+            UI.printDontExistMessage("Period");
+            System.out.println("Try adding a purchase first.");
             return null;
         } else {
             this.setPaymentsData();
@@ -395,7 +399,7 @@ public class Period implements Serializable {
                 .println("\nPersons Direct expenses in '" + this.getName()
                         + "'s' period:\n-------------------------------------------------");
         if (personDirectExpenses.isEmpty()) {
-            System.out.println("No person or purchases Exist yet.");
+            UI.printDontExistMessage("Person or Purchase");
         }
         for (Map.Entry<Person, Integer> entry : personDirectExpenses.entrySet()) {
             Person person = entry.getKey();

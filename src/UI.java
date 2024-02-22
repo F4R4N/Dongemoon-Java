@@ -4,6 +4,10 @@ import java.util.Scanner;
 
 public class UI {
     private static Scanner inputReader = new Scanner(System.in);
+    public static String RESET = "\u001B[0m";
+    public static String RED = "\u001B[31m";
+    public static String GREEN = "\u001B[32m";
+    public static String YELLOW = "\u001B[33m";
 
     public static void initializeUI() {
         printLoginOrRegisterMenu();
@@ -31,7 +35,8 @@ public class UI {
         printTitle("Register");
         String username = getUserStringInput("\nUsername: ");
         if (User.doesUsernameExist(username)) {
-            System.out.println("User with this username is already exist try another one.");
+            printAlreadyExistsMessage("User", "username");
+
             showRegisterUserMenu();
         }
         String password = getUserStringInput("Password: ");
@@ -65,10 +70,6 @@ public class UI {
         }
     }
 
-    private static void printInvalidChoice() {
-        System.out.println("Invalid choice, please try again!");
-    }
-
     private static void printLoginOrRegisterMenu() {
         printTitle("Welcome to DONGEMOON");
         System.out.print("\n1- Register\n2- Login\n3- Exit\n");
@@ -88,17 +89,9 @@ public class UI {
                 int userIntInput = Integer.parseInt(userInput);
                 return userIntInput;
             } catch (NumberFormatException e) {
-                System.out.println("invalid input. input should be an integer.");
+                System.out.println(RED + "invalid input. input should be an integer." + RESET);
             }
         }
-    }
-
-    public static void printTitle(String message) {
-        int terminalSize = 209;
-        int eachSideSize = (terminalSize / 2) + message.length() / 2;
-        System.out.print(String.format("%n%0209d%n", 0).replace("0", "-"));
-        System.out.print(String.format("%" + eachSideSize + "s", message));
-        System.out.print(String.format("%n%0209d%n", 0).replace("0", "-"));
     }
 
     private static void printUserMainMenu() {
@@ -188,10 +181,6 @@ public class UI {
         }
         Database.writePeriodDataToFile(exportData, fileName);
         System.out.println("Period Data successfully exported to: " + fileName);
-    }
-
-    public static void printInvalidDateAndTime() {
-        System.out.println("Invalid date and time. try again.");
     }
 
     public static Period getUserPeriodChoice(String title, ArrayList<Period> periods) {
@@ -336,11 +325,11 @@ public class UI {
         printTitle("Edit Name");
         String newPeriodName = getUserStringInput("what is your new period name? ");
         if (Period.isNameDuplicated(newPeriodName)) {
-            System.out.println("another period with this name is already exist. try another name.");
+            printAlreadyExistsMessage("Period", "name");
             startEditPeriodMenu();
         }
         if (Utils.isStringEmptyOrNull(newPeriodName)) {
-            System.out.println("invalid name. name of period cant be blank.");
+            printCantBeBlank();
             startEditPeriodMenu();
         }
         period.setName(newPeriodName);
@@ -370,10 +359,10 @@ public class UI {
                 showRemovePurchaseMenu(period);
             } else {
                 period.getPurchases().remove(period.getPurchases().get(userDeletionChoice));
-                System.out.println("chose purchase was deleted successfully!");
+                printSuccessfullyDeletedMessage("Purchase");
             }
         } else {
-            System.out.println("there are no purchase exist in this period.");
+            printDontExistMessage("Purchase");
         }
     }
 
@@ -387,7 +376,8 @@ public class UI {
         } else {
             if (Period.isPersonInvolvedInPurchases(period, person)) {
                 System.out.println(
-                        "This person is involved in purchases of this period. you cant delete it. try removing it from purchases and try again.");
+                        RED + "This person is involved in purchases of this period. you cant delete it. try removing it from purchases and try again."
+                                + RESET);
                 startEditPeriodMenu();
             } else {
                 period.getPersons().remove(person);
@@ -397,7 +387,7 @@ public class UI {
     }
 
     public static void printSuccessfullyDeletedMessage(String title) {
-        System.out.println(title + "Deleted successfully!");
+        System.out.println(GREEN + title + "Deleted successfully!" + RESET);
     }
 
     public static void startChoosePurchaseSection(Period period) {
@@ -416,18 +406,6 @@ public class UI {
         } else {
             printDontExistMessage("Purchase");
         }
-    }
-
-    public static void printDontExistMessage(String title) {
-        System.out.println("No " + title + " exists yet.");
-    }
-
-    public static void printSuccessfullyEditedMessage(String title) {
-        System.out.println(title + " Edited successfully!");
-    }
-
-    public static void printSuccessfullyCreatedMessage(String title) {
-        System.out.println(title + " Created successfully!");
     }
 
     public static void startEditPurchaseMenuSection(Period period, Purchase purchase) {
@@ -483,7 +461,7 @@ public class UI {
             purchase.setExpense(newExpense);
             printSuccessfullyEditedMessage("Expense");
         } else {
-            System.out.println("Invalid Expense. Expense should be a positive number.");
+            printInputShouldBePositiveNumberMessage("Expense");
         }
     }
 
@@ -536,7 +514,7 @@ public class UI {
         Person person = getUserPersonChoice("Choose person to add it to Consumers: ", period.getPersons());
         int consumerCoefficientChoice = getUserIntInput("What is this persons coefficient? ");
         if (consumerCoefficientChoice < 1) {
-            System.out.println("Invalid coefficient. coefficient should be a positive integer.");
+            printInputShouldBePositiveNumberMessage("Coefficient");
             showEditConsumerSection(period, purchase);
         }
         if (person == null) {
@@ -564,7 +542,7 @@ public class UI {
         } else {
             PersonCoefficient personCoefficient = consumers.get(userDeleteChoice);
             purchase.removeFromConsumers(personCoefficient);
-            System.out.println("Consumer removed successfully!");
+            printSuccessfullyDeletedMessage("Consumer");
         }
     }
 
@@ -576,17 +554,18 @@ public class UI {
             startUserMainMenuSection();
         } else {
             User.getLoggedInUser().removePeriod(period);
-            System.out.println("Period removed successfully!");
+            printSuccessfullyDeletedMessage("Period");
         }
     }
 
     public static void startAddPersonToPeriodSection(Period period) {
         printTitle("Add Person");
         String userPersonNameInput = getUserStringInput("What is the new person's name? ");
-        if (Person.isNameDuplicated(period.getPersons(), userPersonNameInput)
-                || Utils.isStringEmptyOrNull(userPersonNameInput)) {
-            System.out.println(
-                    "Another person with this name already exist in this period or invalid name. try another name.");
+        if (Person.isNameDuplicated(period.getPersons(), userPersonNameInput)) {
+            printAlreadyExistsMessage("Person", "name");
+            startEditPeriodMenu();
+        } else if (Utils.isStringEmptyOrNull(userPersonNameInput)) {
+            printCantBeBlank();
             startEditPeriodMenu();
         } else {
             Person person = new Person(userPersonNameInput);
@@ -613,18 +592,21 @@ public class UI {
     public static void startAddPurchaseToPeriodSection(Period period) {
         printTitle("Create Purchase");
         if (period.getPersons().size() == 0) {
-            System.out.println("There are no person exist in this period yet. try adding person to period first.");
+            printDontExistMessage("Person");
             startEditPeriodMenu();
         } else {
             String title = getUserStringInput("Title: ");
-            if (Purchase.isTitleDuplicated(period, title) || Utils.isStringEmptyOrNull(title)) {
-                System.out.println(
-                        "another purchase with this title already exist. Title cant be empty string. try another title!");
+            if (Purchase.isTitleDuplicated(period, title)) {
+                printAlreadyExistsMessage("Purchase", "title");
+                startEditPeriodMenu();
+            }
+            if (Utils.isStringEmptyOrNull(title)) {
+                printCantBeBlank();
                 startEditPeriodMenu();
             }
             int expense = getUserIntInput("Expense: ");
             if (!Purchase.isExpenseValid(expense)) {
-                System.out.println("Invalid Expense. Expense should be a positive number.");
+                printInputShouldBePositiveNumberMessage("Expense");
                 startEditPeriodMenu();
             }
             String dateAndTimeInput = getUserStringInput("Date And Time (in 'yyyy-MM-dd HH:mm' format): ");
@@ -660,7 +642,7 @@ public class UI {
             } else {
                 int coefficient = getUserIntInput("What is this persons coefficient in this purchase? ");
                 if (coefficient < 1) {
-                    System.out.println("Invalid coefficient. coefficient should be a positive integer.");
+                    printInputShouldBePositiveNumberMessage("Coefficient");
                     startEditPeriodMenu();
                 } else {
                     PersonCoefficient consumer = new PersonCoefficient(person, coefficient);
@@ -670,4 +652,48 @@ public class UI {
         }
         return consumers;
     }
+
+    public static void printTitle(String message) {
+        int terminalSize = 150;
+        int eachSideSize = (terminalSize / 2) + message.length() / 2;
+        System.out.print(String.format("%n%0" + terminalSize + "d%n", 0).replace("0", "-"));
+        System.out.print(String.format("%" + eachSideSize + "s", message));
+        System.out.print(String.format("%n%0" + terminalSize + "d%n", 0).replace("0", "-"));
+    }
+
+    private static void printInvalidChoice() {
+        System.out.println(RED + "Invalid choice, please try again!" + RESET);
+    }
+
+    public static void printInvalidDateAndTime() {
+        System.out.println(RED +
+                "Invalid date and time (Invalid format or date and time in the future or date and time in far past). try again."
+                + RESET);
+    }
+
+    public static void printCantBeBlank() {
+        System.out.println(RED + "invalid input. this input cant be blank." + RESET);
+    }
+
+    public static void printAlreadyExistsMessage(String member, String field) {
+        System.out.println(RED + "Another " + member + " with this " + field + " already exists. Try another " + field
+                + "." + RESET);
+    }
+
+    public static void printInputShouldBePositiveNumberMessage(String title) {
+        System.out.println(RED + "Invalid " + title + ". " + title + " should be a positive number." + RESET);
+    }
+
+    public static void printDontExistMessage(String title) {
+        System.out.println(YELLOW + "No " + title + " exists yet." + RESET);
+    }
+
+    public static void printSuccessfullyEditedMessage(String title) {
+        System.out.println(GREEN + title + " Edited successfully!" + RESET);
+    }
+
+    public static void printSuccessfullyCreatedMessage(String title) {
+        System.out.println(GREEN + title + " Created successfully!" + RESET);
+    }
+
 }

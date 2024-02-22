@@ -34,7 +34,9 @@ public class Person implements Serializable {
 
     public static void printPersons(ArrayList<Person> persons) {
         if (persons.size() == 0) {
-            System.out.println("No person exist yet");
+            UI.printDontExistMessage("Person");
+
+
         } else {
             String format = "|%-10s  |%-30s|%n";
             System.out.printf(format, "NO.", "Name");

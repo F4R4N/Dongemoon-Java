@@ -68,7 +68,9 @@ public class Purchase implements Serializable {
 
     public static void printListOfPurchases(ArrayList<Purchase> purchases) {
         if (purchases.size() == 0) {
-            System.out.println("No purchases exists yet.");
+            UI.printDontExistMessage("Purchase");
+
+
         } else {
             String format = "|%-10s  |%-30s|%-35s|%-15s|%-20s|%-57s|%n";
             String dataFormat = "|%-10s  |%-30s|%-35s|%-15s|%-20s|%-57s";

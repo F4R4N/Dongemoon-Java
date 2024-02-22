@@ -42,7 +42,7 @@ public class Database {
             is.close();
             Database.setUsers(users);
         } catch (IOException e) {
-            System.out.println("An error occurred while trying to read data from file.");
+            
         } catch (ClassNotFoundException e) {
             System.out.println("Something went wrong");
         } catch (ClassCastException e) {
