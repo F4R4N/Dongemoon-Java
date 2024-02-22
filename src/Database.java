@@ -41,8 +41,6 @@ public class Database {
             ArrayList<User> users = (ArrayList<User>) is.readObject();
             is.close();
             Database.setUsers(users);
-        } catch (FileNotFoundException e) {
-            System.out.println("Data file Not found");
         } catch (IOException e) {
             System.out.println("An error occurred while trying to read data from file.");
         } catch (ClassNotFoundException e) {

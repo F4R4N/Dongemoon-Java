@@ -27,7 +27,6 @@ public class UI {
                 initializeUI();
                 break;
         }
-
     }
 
     public static void printPersonsDirectExpenses(Period period, HashMap<Person, Integer> personDirectExpenses) {
@@ -406,7 +405,7 @@ public class UI {
     public static void showRemovePersonMenu(Period period) {
         printTitle("Delete Person");
         Person person = getUserPersonChoice(
-                "Which person do you want to remove from period? enter the number associated with it: ",
+                "Which person do you want to remove from period? ",
                 period.getPersons());
         if (person == null) {
             startEditPeriodMenu();
@@ -588,9 +587,11 @@ public class UI {
     }
 
     public static void startRemovePeriodSection() {
-        Period period = getUserPeriodChoice("Remove Period", User.getLoggedInUser().getPeriods());
+        printTitle("Remove Period");
+        Period period = getUserPeriodChoice("Which period do you want to delete? ",
+                User.getLoggedInUser().getPeriods());
         if (period == null) {
-            printUserMainMenu();
+            startUserMainMenuSection();
         } else {
             User.getLoggedInUser().removePeriod(period);
             System.out.println("Period removed successfully!");
@@ -675,5 +676,4 @@ public class UI {
         }
         return consumers;
     }
-
 }
