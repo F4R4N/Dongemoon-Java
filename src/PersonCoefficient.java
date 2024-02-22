@@ -50,7 +50,6 @@ public class PersonCoefficient implements Serializable {
         if (persons.size() == 0) {
             UI.printDontExistMessage("Person");
 
-
         } else {
             String format = "|%-10s  |%-30s|%-11s|%n";
             System.out.printf(format, "NO.", "Name", "Coefficient");

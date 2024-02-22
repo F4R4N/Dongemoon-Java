@@ -78,7 +78,6 @@ public class Period implements Serializable {
         if (periods.size() == 0) {
             UI.printDontExistMessage("Period");
 
-
         } else {
             String format = "|%-10s  |%-25s|%-35s|%n";
             System.out.printf(format, "NO.", "Name", "Start Date");

@@ -81,4 +81,11 @@ public class User implements Serializable {
         return null;
     }
 
+    public static boolean isPasswordValid(String password) {
+        if (password.length() < 8) {
+            return false;
+        }
+        return true;
+    }
+
 }

@@ -36,10 +36,13 @@ public class UI {
         String username = getUserStringInput("\nUsername: ");
         if (User.doesUsernameExist(username)) {
             printAlreadyExistsMessage("User", "username");
-
             showRegisterUserMenu();
         }
         String password = getUserStringInput("Password: ");
+        if (!User.isPasswordValid(password)) {
+            System.out.println(RED+"Invalid password. minimum password length is 8 characters."+RESET);
+            showRegisterUserMenu();
+        }
         String name = getUserStringInput("Name: ");
         if (Utils.isStringEmptyOrNull(username) || Utils.isStringEmptyOrNull(name)
                 || Utils.isStringEmptyOrNull(password)) {
@@ -65,7 +68,7 @@ public class UI {
                 initializeUI();
             }
         } else {
-            System.out.println(RED+"invalid username or password. Try again"+RESET);
+            System.out.println(RED + "invalid username or password. Try again" + RESET);
             initializeUI();
         }
     }
@@ -180,7 +183,7 @@ public class UI {
             startUserMainMenuSection();
         }
         Database.writePeriodDataToFile(exportData, fileName);
-        System.out.println(GREEN+"Period Data successfully exported to: " + fileName+RESET);
+        System.out.println(GREEN + "Period Data successfully exported to: " + fileName + RESET);
     }
 
     public static Period getUserPeriodChoice(String title, ArrayList<Period> periods) {
@@ -624,8 +627,9 @@ public class UI {
     public static ArrayList<PersonCoefficient> getUsersConsumersChoice(Period period) {
         int consumersCount = getUserIntInput("How many Consumers are in this purchase? ");
         if (consumersCount > period.getPersons().size()) {
-            System.out.println(RED+
-                    "the number of Consumers you want to add to purchase is more than persons in period. try adding more persons first."+RESET);
+            System.out.println(RED +
+                    "the number of Consumers you want to add to purchase is more than persons in period. try adding more persons first."
+                    + RESET);
             startEditPeriodMenu();
         }
         ArrayList<PersonCoefficient> consumers = new ArrayList<PersonCoefficient>();
@@ -690,7 +694,7 @@ public class UI {
     public static void printSuccessfullyCreatedMessage(String title) {
         System.out.println(GREEN + title + " Created successfully!" + RESET);
     }
-    
+
     public static void printSuccessfullyDeletedMessage(String title) {
         System.out.println(GREEN + title + "Deleted successfully!" + RESET);
     }

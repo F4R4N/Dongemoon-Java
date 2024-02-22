@@ -70,7 +70,6 @@ public class Purchase implements Serializable {
         if (purchases.size() == 0) {
             UI.printDontExistMessage("Purchase");
 
-
         } else {
             String format = "|%-10s  |%-30s|%-35s|%-15s|%-20s|%-57s|%n";
             String dataFormat = "|%-10s  |%-30s|%-35s|%-15s|%-20s|%-57s";
