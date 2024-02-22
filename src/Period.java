@@ -87,7 +87,7 @@ public class Period implements Serializable {
                 Period period = periods.get(index);
                 System.out.printf(format, (index + 1), period.getName(), period.getStartDateAndTime());
                 Person.printPersons(period.getPersons());
-                UI.printPurchasesInPeriod(period);
+                period.printPurchasesInPeriod();
                 System.out.println(
                         "---------------------------------------------------------------------------------------------------------");
             }
@@ -110,7 +110,7 @@ public class Period implements Serializable {
         System.out.println("Number of purchases in period: " + this.getPurchases().size());
         System.out.println("Each persons average expense: " + this.getOverallPersonAverageExpense());
         HashMap<Person, Integer> personDirectExpenses = this.getPersonsDirectExpenses();
-        UI.printPersonsDirectExpenses(this, personDirectExpenses);
+        this.printPersonsDirectExpenses(personDirectExpenses);
         this.printPeriodDebtsAndCredits();
         UI.printTitle("List Of Purchases");
         Purchase.printListOfPurchases(this.getPurchases());
@@ -124,6 +124,17 @@ public class Period implements Serializable {
             }
         }
         return personInvolvedInPurchases;
+    }
+
+    public void printPurchasesInPeriod() {
+        UI.printTitle("Purchases in this period: ");
+        if (this.getPurchases() == null) {
+            UI.printDontExistMessage("Purchase");
+        } else {
+            for (int i = 0; i < this.getPurchases().size(); i++) {
+                System.out.print(this.getPurchases().get(i).getTitle() + ", ");
+            }
+        }
     }
 
     public double getOverallPersonAverageExpense() {
@@ -377,5 +388,18 @@ public class Period implements Serializable {
             data += getPeriodDetailCommaSeparated();
         }
         return data;
+    }
+    public void printPersonsDirectExpenses(HashMap<Person, Integer> personDirectExpenses) {
+        System.out
+                .println("\nPersons Direct expenses in '" + this.getName()
+                        + "'s' period:\n-------------------------------------------------");
+        if (personDirectExpenses.isEmpty()) {
+            System.out.println("No person or purchases Exist yet.");
+        }
+        for (Map.Entry<Person, Integer> entry : personDirectExpenses.entrySet()) {
+            Person person = entry.getKey();
+            Integer directExpense = entry.getValue();
+            System.out.println("'" + person.getName() + "' has direct expense of: '" + directExpense + "'");
+        }
     }
 }

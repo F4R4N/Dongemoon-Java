@@ -29,20 +29,6 @@ public class UI {
         }
     }
 
-    public static void printPersonsDirectExpenses(Period period, HashMap<Person, Integer> personDirectExpenses) {
-        System.out
-                .println("\nPersons Direct expenses in '" + period.getName()
-                        + "'s' period:\n-------------------------------------------------");
-        if (personDirectExpenses.isEmpty()) {
-            System.out.println("No person or purchases Exist yet.");
-        }
-        for (Map.Entry<Person, Integer> entry : personDirectExpenses.entrySet()) {
-            Person person = entry.getKey();
-            Integer directExpense = entry.getValue();
-            System.out.println("'" + person.getName() + "' has direct expense of: '" + directExpense + "'");
-        }
-    }
-
     private static void showRegisterUserMenu() {
         printTitle("Register");
         String username = getUserStringInput("\nUsername: ");
@@ -167,17 +153,6 @@ public class UI {
         ArrayList<Period> userPeriods = User.getLoggedInUser().getPeriods();
         Period.printListOfPeriods(userPeriods);
         startUserMainMenuSection();
-    }
-
-    public static void printPurchasesInPeriod(Period period) {
-        printTitle("Purchases in this period: ");
-        if (period.getPurchases() == null) {
-            printDontExistMessage("Purchase");
-        } else {
-            for (int i = 0; i < period.getPurchases().size(); i++) {
-                System.out.print(period.getPurchases().get(i).getTitle() + ", ");
-            }
-        }
     }
 
     public static void showCreatePeriodMenu() {
@@ -399,7 +374,7 @@ public class UI {
                 period.getPurchases().remove(period.getPurchases().get(userDeletionChoice));
                 System.out.println("chose purchase was deleted successfully!");
             }
-        }else{
+        } else {
             System.out.println("there are no purchase exist in this period.");
         }
     }
@@ -458,7 +433,7 @@ public class UI {
     }
 
     public static void startEditPurchaseMenuSection(Period period, Purchase purchase) {
-        printTitle("Edit '"+purchase.getTitle()+"' Purchase");
+        printTitle("Edit '" + purchase.getTitle() + "' Purchase");
         int userEditingChoice = getUserIntInput(
                 "What do you want to edit?\n1- Title\n2- Expense\n3- Date and time\n4- Buyer\n5- Consumers\n6- Back\n: ");
         switch (userEditingChoice) {
@@ -495,7 +470,8 @@ public class UI {
     public static void showEditPurchaseTitleSection(Period period, Purchase purchase) {
         String newTitle = getUserStringInput("Enter new title: ");
         if (Purchase.isTitleDuplicated(period, newTitle) || Utils.isStringEmptyOrNull(newTitle)) {
-            System.out.println("another purchase with this title exists in this period or invalid title. try another title.");
+            System.out.println(
+                    "another purchase with this title exists in this period or invalid title. try another title.");
             startEditPurchaseMenuSection(period, purchase);
         } else {
             purchase.setTitle(newTitle);
@@ -505,8 +481,12 @@ public class UI {
 
     public static void showEditPurchaseExpenseSection(Purchase purchase) {
         int newExpense = getUserIntInput("Enter new Expense: ");
-        purchase.setExpense(newExpense);
-        printSuccessfullyEditedMessage("Expense");
+        if (Purchase.isExpenseValid(newExpense)) {
+            purchase.setExpense(newExpense);
+            printSuccessfullyEditedMessage("Expense");
+        }else{
+            System.out.println("Invalid Expense. Expense should be a positive number.");
+        }
     }
 
     public static void showEditPurchaseDateAndTimeSection(Period period, Purchase purchase) {
@@ -605,8 +585,10 @@ public class UI {
     public static void startAddPersonToPeriodSection(Period period) {
         printTitle("Add Person");
         String userPersonNameInput = getUserStringInput("What is the new person's name? ");
-        if (Person.isNameDuplicated(period.getPersons(), userPersonNameInput) || Utils.isStringEmptyOrNull(userPersonNameInput)) {
-            System.out.println("Another person with this name already exist in this period or invalid name. try another name.");
+        if (Person.isNameDuplicated(period.getPersons(), userPersonNameInput)
+                || Utils.isStringEmptyOrNull(userPersonNameInput)) {
+            System.out.println(
+                    "Another person with this name already exist in this period or invalid name. try another name.");
             startEditPeriodMenu();
         } else {
             Person person = new Person(userPersonNameInput);
@@ -637,11 +619,16 @@ public class UI {
             startEditPeriodMenu();
         } else {
             String title = getUserStringInput("Title: ");
-            if (Purchase.isTitleDuplicated(period, title) ||Utils.isStringEmptyOrNull(title)) {
-                System.out.println("another purchase with this title already exist. Title cant be empty string. try another title!");
+            if (Purchase.isTitleDuplicated(period, title) || Utils.isStringEmptyOrNull(title)) {
+                System.out.println(
+                        "another purchase with this title already exist. Title cant be empty string. try another title!");
                 startEditPeriodMenu();
             }
             int expense = getUserIntInput("Expense: ");
+            if (!Purchase.isExpenseValid(expense)) {
+                System.out.println("Invalid Expense. Expense should be a positive number.");
+                startEditPeriodMenu();
+            }
             String dateAndTimeInput = getUserStringInput("Date And Time (in 'yyyy-MM-dd HH:mm' format): ");
             Date dateAndTime = Utils.getDateByDateString(dateAndTimeInput);
             if (dateAndTime == null) {

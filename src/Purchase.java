@@ -101,6 +101,13 @@ public class Purchase implements Serializable {
         return false;
     }
 
+    public static boolean isExpenseValid(int expense){
+        if (expense<=0) {
+            return false;
+        }
+        return true;
+    }
+
     public static ArrayList<Purchase> getBuyerFilteredPurchases(Period period, Person person) {
         ArrayList<Purchase> filteredPurchases = new ArrayList<Purchase>();
         for (int i = 0; i < period.getPurchases().size(); i++) {
