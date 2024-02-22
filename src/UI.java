@@ -399,6 +399,8 @@ public class UI {
                 period.getPurchases().remove(period.getPurchases().get(userDeletionChoice));
                 System.out.println("chose purchase was deleted successfully!");
             }
+        }else{
+            System.out.println("there are no purchase exist in this period.");
         }
     }
 
@@ -456,6 +458,7 @@ public class UI {
     }
 
     public static void startEditPurchaseMenuSection(Period period, Purchase purchase) {
+        printTitle("Edit '"+purchase.getTitle()+"' Purchase");
         int userEditingChoice = getUserIntInput(
                 "What do you want to edit?\n1- Title\n2- Expense\n3- Date and time\n4- Buyer\n5- Consumers\n6- Back\n: ");
         switch (userEditingChoice) {
@@ -491,8 +494,8 @@ public class UI {
 
     public static void showEditPurchaseTitleSection(Period period, Purchase purchase) {
         String newTitle = getUserStringInput("Enter new title: ");
-        if (Purchase.isTitleDuplicated(period, newTitle)) {
-            System.out.println("another purchase with this title exists in this period. try another title.");
+        if (Purchase.isTitleDuplicated(period, newTitle) || Utils.isStringEmptyOrNull(newTitle)) {
+            System.out.println("another purchase with this title exists in this period or invalid title. try another title.");
             startEditPurchaseMenuSection(period, purchase);
         } else {
             purchase.setTitle(newTitle);
@@ -556,6 +559,7 @@ public class UI {
         int consumerCoefficientChoice = getUserIntInput("What is this persons coefficient? ");
         if (consumerCoefficientChoice < 1) {
             System.out.println("Invalid coefficient. coefficient should be a positive integer.");
+            showEditConsumerSection(period, purchase);
         }
         if (person == null) {
             showEditConsumerSection(period, purchase);
@@ -601,8 +605,8 @@ public class UI {
     public static void startAddPersonToPeriodSection(Period period) {
         printTitle("Add Person");
         String userPersonNameInput = getUserStringInput("What is the new person's name? ");
-        if (Person.isNameDuplicated(period.getPersons(), userPersonNameInput)) {
-            System.out.println("Another person with this name already exist in this period. try another name.");
+        if (Person.isNameDuplicated(period.getPersons(), userPersonNameInput) || Utils.isStringEmptyOrNull(userPersonNameInput)) {
+            System.out.println("Another person with this name already exist in this period or invalid name. try another name.");
             startEditPeriodMenu();
         } else {
             Person person = new Person(userPersonNameInput);
@@ -633,6 +637,10 @@ public class UI {
             startEditPeriodMenu();
         } else {
             String title = getUserStringInput("Title: ");
+            if (Purchase.isTitleDuplicated(period, title) ||Utils.isStringEmptyOrNull(title)) {
+                System.out.println("another purchase with this title already exist. Title cant be empty string. try another title!");
+                startEditPeriodMenu();
+            }
             int expense = getUserIntInput("Expense: ");
             String dateAndTimeInput = getUserStringInput("Date And Time (in 'yyyy-MM-dd HH:mm' format): ");
             Date dateAndTime = Utils.getDateByDateString(dateAndTimeInput);
@@ -668,6 +676,7 @@ public class UI {
                 int coefficient = getUserIntInput("What is this persons coefficient in this purchase? ");
                 if (coefficient < 1) {
                     System.out.println("Invalid coefficient. coefficient should be a positive integer.");
+                    startEditPeriodMenu();
                 } else {
                     PersonCoefficient consumer = new PersonCoefficient(person, coefficient);
                     consumers.add(consumer);
