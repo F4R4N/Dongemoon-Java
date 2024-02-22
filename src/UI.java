@@ -98,7 +98,7 @@ public class UI {
         int eachSideSize = (terminalSize / 2) + message.length() / 2;
         System.out.print(String.format("%n%0209d%n", 0).replace("0", "-"));
         System.out.print(String.format("%" + eachSideSize + "s", message));
-        System.out.print(String.format("%n%0209d", 0).replace("0", "-"));
+        System.out.print(String.format("%n%0209d%n", 0).replace("0", "-"));
     }
 
     private static void printUserMainMenu() {
