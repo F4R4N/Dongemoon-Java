@@ -51,6 +51,7 @@ public class UI {
         } else {
             User.registerUser(username, password, name);
             printSuccessfullyCreatedMessage("User");
+            initializeUI();
         }
     }
 
@@ -152,6 +153,10 @@ public class UI {
     public static void showCreatePeriodMenu() {
         printTitle("Create Period");
         String name = getUserStringInput("Name: ");
+        if (Utils.isStringEmptyOrNull(name)) {
+            printCantBeBlank();
+            startUserMainMenuSection();
+        }
         String startDateAndTimeInput = getUserStringInput("Start Date and Time (in 'yyyy-MM-dd HH:mm' format): ");
         Date startDateAndTime = Utils.getDateByDateString(startDateAndTimeInput);
         if (startDateAndTime == null) {
@@ -180,6 +185,8 @@ public class UI {
         fileName += ".csv";
         String exportData = period.getExportData();
         if (exportData == null) {
+            printDontExistMessage("Purchase");
+            System.out.println("Try adding a purchase first.");
             startUserMainMenuSection();
         }
         Database.writePeriodDataToFile(exportData, fileName);

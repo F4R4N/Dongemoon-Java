@@ -361,8 +361,6 @@ public class Period implements Serializable {
     public String getPeriodDetailCommaSeparated() {
         String periodDetailData = "\n\nPeriod Payment Details:\nPerson,Action,Amount,To Person\n";
         if (this.getPurchases().size() == 0) {
-            UI.printDontExistMessage("Period");
-            System.out.println("Try adding a purchase first.");
             return null;
         } else {
             this.setPaymentsData();
